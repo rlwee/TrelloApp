@@ -1,5 +1,6 @@
 {% extends 'trelloapp/trellobase.html' %}
 
+
 {% block title %}Trello-Dashboard{% endblock %}
 
 {% block content %}
@@ -9,17 +10,26 @@
 
     <div>
         <form method="GET" novalidate> {% csrf_token %}
-        <button formaction="{% url 'createboard' %}">Boards</button>
+        <button formaction="{% url 'createboard'  %}">Boards</button>
         </form>
     </div>
 
+    <div>
+        <ul class="cards">
+        {% for list in boardlist %}
+            <li>{{list.title}}</li>
+        {% empty %}
+        <p>no list avaliable</p>
+        {% endfor %}
+        </ul>
 
+    </div>
+    
     
     <div>
         <form method="GET" novalidate>{% csrf_token %}
             <button formaction="{% url 'createlist' %}">add a list</button>
         </form>
-        
     </div>
 
 {% endblock %}

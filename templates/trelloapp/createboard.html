@@ -1,0 +1,27 @@
+{% extends 'trelloapp/trellobase.html' %}
+
+{% block title %}Trello-Dashboard{% endblock %}
+
+{% block content %}
+    <div>
+    <h1>HELLO TRELLO!</h1>
+    </div>
+
+    <form method="POST" novalidate>{% csrf_token %}  
+    <div>
+        {% for field in form %}
+            <p>{{ field.label }}</p>
+            <p>{{ field }}</p>
+            <span>{{ field.errors }}</span>
+        {% endfor %}
+        <button type="submit">Create Board</button>
+    </div>
+    </form> 
+
+    <div>
+        {% for board in boards %}
+             <a href="{% url 'board' pk=board.pk %}">{{board.title}}</a>
+        {% endfor %}
+    </div>
+
+{% endblock %}
