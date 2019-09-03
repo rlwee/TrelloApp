@@ -3,23 +3,6 @@
 {% block title %}Trello-Dashboard{% endblock %}
 
 {% block content %}
-    <div>
-    <h1>HELLO TRELLO!</h1>
-    </div>
-
-    <div>
-        <form method="GET" novalidate> {% csrf_token %}
-        <button formaction="{% url 'createboard' %}">Boards</button>
-        </form>
-    </div>
-
-
-    
-    <div>
-        <form method="GET" novalidate>{% csrf_token %}
-            <button formaction="{% url 'createlist' %}">add a list</button>
-        </form>
-        
-    </div>
+  
 
 {% endblock %}

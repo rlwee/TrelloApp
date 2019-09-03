@@ -3,13 +3,11 @@
 {% block title %}Trello-Dashboard{% endblock %}
 
 {% block content %}
-    <div>
-    <h1>HELLO TRELLO!</h1>
-    </div>
+
 
     <form method="POST" novalidate>{% csrf_token %}  
     <div>
-        {% for field in trellolist %}
+        {% for field in listform %}
             <p>{{ field.label }}</p>
             <p>{{ field }}</p>
             <span>{{ field.errors }}</span>

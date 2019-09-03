@@ -8,8 +8,9 @@ class PostForm(forms.ModelForm):
         model = Board
         fields = ('title',)
 
-class PostList(forms.ModelForm):
+class TrelloListForm(forms.ModelForm):
 
     class Meta:
         model = TrelloList
         fields = ('title',)
+

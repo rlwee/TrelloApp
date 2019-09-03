@@ -1,15 +1,15 @@
 from django.urls import path,include
 from trelloapp.views import (Dash,
-                             BoardButton,
-                             CreateList,
+                             BoardListView,
                              BoardView,
+                             ListOfBoards,
                             )
 
 urlpatterns = [
 
     path('', Dash.as_view(), name='dashboard'),
-    path('createboard/', BoardButton.as_view(), name='createboard'),
-    path('createlist/', CreateList.as_view(), name = 'createlist'),
-    path('board/<pk>/', BoardView.as_view(), name = 'board')
+    path('board/create', BoardListView.as_view(), name='createboard'),
+    path('board/<pk>/', BoardView.as_view(), name = 'board'),
+    path('boards/',ListOfBoards.as_view(), name='listofboards')
 
 ]

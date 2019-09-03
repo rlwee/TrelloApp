@@ -5,31 +5,31 @@
 
 {% block content %}
     <div>
-    <h1>HELLO TRELLO!</h1>
-    </div>
-
-    <div>
-        <form method="GET" novalidate> {% csrf_token %}
-        <button formaction="{% url 'createboard'  %}">Boards</button>
+        <form method="POST" novalidate>{% csrf_token %}
+            <label>{{ form.title.label }}</label>
+            {{ form.title }}
+            <button type="submit">Save</button>
         </form>
     </div>
 
-    <div>
-        <ul class="cards">
+    <div class="list-container">
+        <ul class="list-view">
         {% for list in boardlist %}
-            <li>{{list.title}}</li>
+            <a href="#"><li class="list-content">{{list.title}}</li></a>
         {% empty %}
-        <p>no list avaliable</p>
+        <p>no list </p>
         {% endfor %}
         </ul>
 
+        <div class="cards">
+            
+
+        </div>
+
     </div>
     
     
     <div>
-        <form method="GET" novalidate>{% csrf_token %}
-            <button formaction="{% url 'createlist' %}">add a list</button>
-        </form>
     </div>
 
 {% endblock %}

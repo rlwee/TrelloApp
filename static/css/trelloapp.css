@@ -1,5 +1,30 @@
-body{
 
-    background-color: #E5C1CD;
+
+.list-container{
+
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+ 
+    overflow: hidden;
+    background-color:#606977;
+
+}
+
+.list-view{
+
+    float: left;
+
+}
+
+.list-content{
+
+    display: block;
+    color: white;
+    
+    text-align: center;
+    padding: 5px, -5px;
+    
+    text-decoration: none;
 
 }

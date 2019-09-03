@@ -1,0 +1,15 @@
+{% extends 'trelloapp/trellobase.html' %}
+
+{% block title %}Trello-Dashboard{% endblock %}
+
+{% block content %}
+    <div class="detail">
+        <ul>
+            {% for board in owner %}
+                <li><a class="boardlist" href="{% url 'board' pk=board.pk %}">{{board.title}}</a></li>
+                {% empty %}
+                <p class="noboard">No boards, createboards </p>   
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
