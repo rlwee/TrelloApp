@@ -5,26 +5,40 @@
     list-style-type: none;
     margin: 0;
     padding: 0;
- 
+     
     overflow: hidden;
-    background-color:#606977;
+ 
 
 }
 
 .list-view{
 
     float: left;
-
 }
 
 .list-content{
-
-    display: block;
+    background-color:#606977;
+    padding: 10px 10px;
     color: white;
-    
     text-align: center;
-    padding: 5px, -5px;
-    
     text-decoration: none;
+    display: inline;
+    margin-right: 70px;    
+}
+
+.detail-container{
+
+    padding-left: 0px;
+
+}
+
+.container{
+    margin-top: 20px;
+    margin-left: 0px;
+}
+
+.edit-list{
+
+    margin-left: -25px;
 
 }

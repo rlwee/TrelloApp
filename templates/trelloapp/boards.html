@@ -8,7 +8,7 @@
             {% for board in owner %}
                 <li><a class="boardlist" href="{% url 'board' pk=board.pk %}">{{board.title}}</a></li>
                 {% empty %}
-                <p class="noboard">No boards, createboards </p>   
+                <p class="noboard">No boards yet, create boards </p>   
             {% endfor %}
         </ul>
     </div>

@@ -17,15 +17,16 @@ class Dash(TemplateView):
 class BoardListView(TemplateView):
 
     template_name = 'trelloapp/createboard.html'
+    form = PostForm
 
     def get(self, request, **kwargs):
 
-        form = PostForm()
-        boards = Board.objects.filter(owner=request.user)
-        return render(request, self.template_name, {'form':form, 'boards':boards})
+        form = self.form()
+       # boards = Board.objects.filter(owner=request.user)
+        return render(request, self.template_name, {'form':form,})
 
     def post(self, request, ** kwargs):
-        form = PostForm(request.POST)
+        form = self.form(request.POST)
         if form.is_valid():
             board = form.save(commit=False)
             board.owner = request.user
@@ -43,11 +44,9 @@ class BoardView(TemplateView):
         id = kwargs.get('pk')
         board = get_object_or_404(Board, pk=id)
         boardlist = TrelloList.objects.filter(board=board)
-        boardcard = Card.objects.filter(trello_list=board)
         context = {
             'board':board,
             'boardlist':boardlist,
-            'boardcard':boardcard,
             'form': self.form()
         }
         return render(request, self.template_name, context)
@@ -73,11 +72,76 @@ class ListOfBoards(TemplateView):
 
     def get(self,request,**kwargs):
         owner = Board.objects.filter(owner=request.user)
-        boards = Board.objects.all()
-        return render(request, self.template_name,{'boards':boards,'owner':owner})
+        #boards = Board.objects.all()
+        return render(request, self.template_name,{'owner':owner})
 
 
-class CreateCard(TemplateView):
-    pass
+class BoardDetailView(TemplateView):
+    """To Edit or Deleting a board
+    """
+    template_name = 'trelloapp/boarddetail.html'
+    
+    def get(self,request, **kwargs):
+        id = kwargs.get('pk')
+        boards = get_object_or_404(Board, pk=id)
+        return render(request,self.template_name,{'boards':boards})
+
+class EditBoard(TemplateView):
+
+    template_name = 'trelloapp/boardedit.html'
+    form = PostForm
+
+    def get(self,request, **kwargs):
+        id = kwargs.get('pk')
+        boards = get_object_or_404(Board, pk=id)
+        form = self.form(instance=boards)
+        if not request.user.is_authenticated:
+            return redirect('listofboards')
+        return render(request,self.template_name,{'form':form,'boards':boards})
+
+    def post(self,request,**kwargs):
+        id = kwargs.get('pk')
+        boards = get_object_or_404(Board, pk=id)
+        form = self.form(request.POST, instance=boards)
+        if form.is_valid():
+            board = form.save(commit=False)
+            board.owner = request.user
+            board.save()
+            return redirect('detail', pk=board.pk)
+        return render(request, self.template_name, {'form':form,'boards':boards})
 
 
+class DeleteBoard(TemplateView):
+
+    template_name = 'trelloapp/boards.html'
+
+    def get(self,request,**kwargs):
+        id = kwargs.get('pk')
+        boards = Board.objects.get(pk=id, owner=request.user)
+        if request.user.is_authenticated:
+            boards.delete()
+            return redirect('listofboards')
+
+class EditList(TemplateView):
+
+    template_name = 'trelloapp/editlist.html'
+    form = TrelloListForm
+
+    def get(self,request, **kwargs):
+        id = kwargs.get('pk')
+        # board = Board.objects.get(pk=id)
+        lists = TrelloList.objects.get(pk=id)
+        form = self.form(instance=lists)
+        return render(request, self.template_name, {'lists':lists,'form':form})
+
+    def post(self,request, **kwargs):
+        id = kwargs.get('pk')
+        boards = get_object_or_404(Board, pk=id)
+        lists = TrelloList.objects.get(pk=id)
+        form = self.form(request.POST, instance=lists)
+        if form.is_valid():
+            listss = form.save(commit=False)
+            listss.board = lists
+            listss.save()
+            return redirect('board', pk=id)
+        return render(request, self.template_name, {'lists':lists,'form':form})

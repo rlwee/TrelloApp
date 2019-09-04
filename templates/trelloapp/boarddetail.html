@@ -1,0 +1,13 @@
+{% extends 'trelloapp/trellobase.html' %}
+
+{% block title %}Trello-Dashboard{% endblock %}
+{% block board %}<a class="navbar-brand" href="{% url 'board' pk=boards.pk %}">{{boards.title}}</a>{% endblock %}
+{% block content %}
+
+<div class="detail-container">
+    <div class="edit-button">
+    <a href="{% url 'editboard' pk=boards.pk %}" class="btn btn-secondary btn-lg " role="button" aria-disabled="true">Edit board title</a>
+    </div class="delete-button">
+    <a href="{% url 'deleteboard' pk=boards.pk %}" class="btn btn-secondary btn-lg " role="button" aria-disabled="true">Delete board</a>
+</div>
+{% endblock %}

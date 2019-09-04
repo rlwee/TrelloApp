@@ -3,10 +3,13 @@
 
 {% block title %}Trello-Dashboard{% endblock %}
 
+
+{% block board %}<a class="navbar-brand" href="{% url 'detail' pk=board.pk %}">{{board.title}}</a>{% endblock %}
+
 {% block content %}
     <div>
         <form method="POST" novalidate>{% csrf_token %}
-            <label>{{ form.title.label }}</label>
+            <label>Create New List {{ form.title.label }}</label>
             {{ form.title }}
             <button type="submit">Save</button>
         </form>
@@ -15,7 +18,9 @@
     <div class="list-container">
         <ul class="list-view">
         {% for list in boardlist %}
+        <a class="edit-list" href="{% url 'editlist' pk=list.pk %}">edit</a>
             <a href="#"><li class="list-content">{{list.title}}</li></a>
+            
         {% empty %}
         <p>no list </p>
         {% endfor %}
