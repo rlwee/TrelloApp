@@ -1,9 +1,5 @@
 {% extends 'trelloapp/trellobase.html' %}
-
-
 {% block title %}Trello-Dashboard{% endblock %}
-
-
 {% block board %}<a class="navbar-brand" href="{% url 'detail' pk=board.pk %}">{{board.title}}</a>{% endblock %}
 
 {% block content %}
@@ -15,26 +11,7 @@
         </form>
     </div>
 
-    <div class="list-container">
-        <ul class="list-view">
-        {% for list in boardlist %}
-        <a class="edit-list" href="{% url 'editlist' pk=list.pk %}">edit</a>
-            <a href="#"><li class="list-content">{{list.title}}</li></a>
-            
-        {% empty %}
-        <p>no list </p>
-        {% endfor %}
-        </ul>
-
-        <div class="cards">
-            
-
-        </div>
-
+    <div class="list-container" data-url="{% url 'listviews' pk=board.id %}">
+      
     </div>
-    
-    
-    <div>
-    </div>
-
 {% endblock %}

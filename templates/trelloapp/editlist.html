@@ -9,6 +9,7 @@
 {% block content %}
     <div>
         <form method="POST" novalidate>{% csrf_token %}
+            <p>blah</p>
             <label>List {{ form.title.label }}  {{form.title}}</label>
             <button type="submit">save</button>
         </form>

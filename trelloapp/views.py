@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect,get_object_or_404
 from django.views.generic.base import TemplateView
 from trelloapp.models import Board,TrelloList,Card
 from django.contrib.auth.models import User
-from .forms import PostForm,TrelloListForm
+from .forms import PostForm,TrelloListForm,TrelloCardForm
 
 
 # Create your views here.
@@ -14,7 +14,7 @@ class Dash(TemplateView):
 
 
 
-class BoardListView(TemplateView):
+class BoardCreateView(TemplateView):
 
     template_name = 'trelloapp/createboard.html'
     form = PostForm
@@ -39,9 +39,9 @@ class BoardView(TemplateView):
 
     template_name = 'trelloapp/currentboard.html'
     form = TrelloListForm
-
+    
     def get(self, request, **kwargs):
-        id = kwargs.get('pk')
+        id = kwargs.get('board_id')
         board = get_object_or_404(Board, pk=id)
         boardlist = TrelloList.objects.filter(board=board)
         context = {
@@ -52,15 +52,15 @@ class BoardView(TemplateView):
         return render(request, self.template_name, context)
     
     def post(self,request,**kwargs):
-        
-        id = kwargs.get('pk')
+      
+        id = kwargs.get('board_id')
         board = get_object_or_404(Board, pk=id)
         form = self.form(request.POST)
         if form.is_valid():
             tlist = form.save(commit=False)
             tlist.board = board
             tlist.save()
-            return redirect('board', pk=id)
+            return redirect('board', board_id=board.id)
         return render(request, self.template_name, {'form': form})
 
 
@@ -71,9 +71,9 @@ class ListOfBoards(TemplateView):
     template_name = 'trelloapp/boards.html'
 
     def get(self,request,**kwargs):
-        owner = Board.objects.filter(owner=request.user)
-        #boards = Board.objects.all()
-        return render(request, self.template_name,{'owner':owner})
+        boards = Board.objects.filter(owner=request.user)
+        #owner = Board.objects.all()
+        return render(request, self.template_name,{'boards':boards})
 
 
 class BoardDetailView(TemplateView):
@@ -92,7 +92,7 @@ class EditBoard(TemplateView):
     form = PostForm
 
     def get(self,request, **kwargs):
-        id = kwargs.get('pk')
+        id = kwargs.get('board_id')
         boards = get_object_or_404(Board, pk=id)
         form = self.form(instance=boards)
         if not request.user.is_authenticated:
@@ -100,7 +100,7 @@ class EditBoard(TemplateView):
         return render(request,self.template_name,{'form':form,'boards':boards})
 
     def post(self,request,**kwargs):
-        id = kwargs.get('pk')
+        id = kwargs.get('board_id')
         boards = get_object_or_404(Board, pk=id)
         form = self.form(request.POST, instance=boards)
         if form.is_valid():
@@ -116,7 +116,7 @@ class DeleteBoard(TemplateView):
     template_name = 'trelloapp/boards.html'
 
     def get(self,request,**kwargs):
-        id = kwargs.get('pk')
+        id = kwargs.get('board_id')
         boards = Board.objects.get(pk=id, owner=request.user)
         if request.user.is_authenticated:
             boards.delete()
@@ -136,12 +136,83 @@ class EditList(TemplateView):
 
     def post(self,request, **kwargs):
         id = kwargs.get('pk')
-        boards = get_object_or_404(Board, pk=id)
+        board_id = kwargs.get('board_id')
+        boards = get_object_or_404(Board, pk=board_id)
         lists = TrelloList.objects.get(pk=id)
         form = self.form(request.POST, instance=lists)
         if form.is_valid():
             listss = form.save(commit=False)
-            listss.board = lists
+            listss.board = boards
             listss.save()
-            return redirect('board', pk=id)
-        return render(request, self.template_name, {'lists':lists,'form':form})
+            return redirect('board', pk=board_id)
+        return render(request, self.template_name, {'form':form})
+
+
+class MyAjaxView(TemplateView):
+    """ Render boards template through ajax
+    """
+
+    template_name = 'trelloapp/ajax.html'
+
+
+class ListView(TemplateView):
+    """ Retrieve all List in a Board
+    """
+    template_name = 'trelloapp/lists.html'
+
+    def get(self,request,**kwargs):
+        id = kwargs.get('pk')
+        board = get_object_or_404(Board, pk=id)
+        lists = TrelloList.objects.filter(board=board)
+        return render(request, self.template_name, {'board': board, 'lists':lists})
+
+class CardCreateView(TemplateView):
+
+    template_name = 'trelloapp/addcard.html'
+    form = TrelloCardForm
+
+    def get(self, request, **kwargs):
+        #import pdb; pdb.set_trace()
+        id = kwargs.get('list_id')
+        lists = get_object_or_404(TrelloList, pk=id)
+        card = Card.objects.filter(trello_list=lists)
+        form = self.form()
+        context = {
+            'lists':lists,
+            'card':card,
+            'form':form,
+        }
+        return render(request, self.template_name, context)
+
+    def post(self,request,**kwargs):
+        board_id = kwargs.get('pk')
+        list_id = kwargs.get('list_id')
+        lists = get_object_or_404(TrelloList, pk=list_id)
+        card = Card.objects.filter(trello_list=lists)
+        form = self.form(request.POST)
+        if form.is_valid():
+            card = form.save(commit=False)
+            card.trello_list = lists
+            card.save()
+            return redirect('cardviews', board_id=board_id, list_id=list_id)
+        return render(request, self.template_name, {'form':form})
+
+
+class CardList(TemplateView):
+
+    template_name = 'trelloapp/cards.html'
+
+    def get(self,request,**kwargs):
+        board_id = kwargs.get('board_id')
+        list_id = kwargs.get('list_id')
+        board_list = get_object_or_404(TrelloList, pk=list_id)
+        cards = Card.objects.filter(trello_list=board_list)
+        context = {
+            'cards':cards,
+        }
+        return render(request, self.template_name, context)
+
+
+   
+
+

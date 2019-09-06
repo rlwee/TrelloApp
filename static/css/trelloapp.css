@@ -18,12 +18,12 @@
 
 .list-content{
     background-color:#606977;
-    padding: 10px 10px;
     color: white;
     text-align: center;
     text-decoration: none;
     display: inline;
     margin-right: 70px;    
+    padding: 2px 10px 2px 10px;
 }
 
 .detail-container{
@@ -40,5 +40,18 @@
 .edit-list{
 
     margin-left: -25px;
+
+}
+
+.list-section {
+    width: 250px;
+    height: 200px;
+    border: 1px solid #ccc;
+    display: inline-block;
+}
+
+.edit-delete-list-button{
+
+    position: relative;
 
 }

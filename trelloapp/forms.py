@@ -14,3 +14,9 @@ class TrelloListForm(forms.ModelForm):
         model = TrelloList
         fields = ('title',)
 
+class TrelloCardForm(forms.ModelForm):
+
+    class Meta:
+        model = Card
+        fields = ('title','labels',)
+

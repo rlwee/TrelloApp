@@ -1,0 +1,11 @@
+{% block content %}
+<div class="list-containers">
+        <ul class="list-view">
+            {% for card in cards %}
+                <a href="#"><li class="list-content">{{card.title}}</li></a>
+                    {% empty %}
+                <p>no card </p>
+            {% endfor %}
+        </ul>
+</div>
+{% endblock %}
