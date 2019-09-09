@@ -1,10 +1,12 @@
 {% block content %}
-<div class="list-containers">
+<div class="card-containers">
         <ul class="list-view">
             {% for card in cards %}
+                <div class="card-section" data-id = "{{ list_id }}" >
                 <a href="#"><li class="list-content">{{card.title}}</li></a>
                     {% empty %}
                 <p>no card </p>
+                </div>
             {% endfor %}
         </ul>
 </div>

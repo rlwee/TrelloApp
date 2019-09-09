@@ -1,4 +1,8 @@
+body{
 
+    background-color: #F3DBCF;
+
+}
 
 .list-container{
 
@@ -28,23 +32,23 @@
 
 .detail-container{
 
-    padding-left: 0px;
-
+    padding-left: 20px;
+    
 }
 
 .container{
     margin-top: 20px;
-    margin-left: 0px;
+    margin-left: 20px;
 }
 
 .edit-list{
 
-    margin-left: -25px;
+    margin-left: -30px;
 
 }
 
 .list-section {
-    width: 250px;
+    width: 300px;
     height: 200px;
     border: 1px solid #ccc;
     display: inline-block;

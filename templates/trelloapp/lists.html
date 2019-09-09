@@ -4,12 +4,13 @@
         {% for list in lists %}
             <div class="list-section" data-cards="{% url 'cardviews' board.id list.id %}">
                 <a href="{% url 'addcard' pk=board.id list_id=list.pk %}">Add Card</a>
-                    <li class="list-content">{{list.title}}</li>
+                    <li class="list-content" data-url="" data-id="{{ list.id }}">{{list.title}}</li>
                         <div class="edit-delete-list-button">
                             <a class="edit-list-button" href="{% url 'addcard' pk=board.id list_id=list.pk %}">Edit List</a>
                         </div>
-                            <div class="card-container" data-urls="url 'cardviews' board_id=board.id list_id=list.id ">
+                            <div data-id="{{ list.id }}" class="card-container" data-url="{% url 'cardviews' board_id=board.id list_id=list.id %}">
                                 <!-- card data goes here -->
+                                
                             </div>
             </div>
            

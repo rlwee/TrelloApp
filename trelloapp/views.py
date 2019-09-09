@@ -12,6 +12,11 @@ class Dash(TemplateView):
 
     template_name = 'trelloapp/dashboard.html'
 
+    def get(self, request, **kwargs):
+        if request.user.is_authenticated:
+            return render(request, self.template_name, {})
+        else:
+            return redirect('login')
 
 
 class BoardCreateView(TemplateView):
@@ -44,10 +49,11 @@ class BoardView(TemplateView):
         id = kwargs.get('board_id')
         board = get_object_or_404(Board, pk=id)
         boardlist = TrelloList.objects.filter(board=board)
+        form = self.form()
         context = {
             'board':board,
             'boardlist':boardlist,
-            'form': self.form()
+            'form':form
         }
         return render(request, self.template_name, context)
     
@@ -61,7 +67,7 @@ class BoardView(TemplateView):
             tlist.board = board
             tlist.save()
             return redirect('board', board_id=board.id)
-        return render(request, self.template_name, {'form': form})
+        return render(request, self.template_name, {'form':form,'board':board})
 
 
 
@@ -209,6 +215,8 @@ class CardList(TemplateView):
         cards = Card.objects.filter(trello_list=board_list)
         context = {
             'cards':cards,
+            'board_id': board_id,
+            'list_id': list_id,
         }
         return render(request, self.template_name, context)
 
