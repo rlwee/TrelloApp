@@ -10,13 +10,12 @@ $(document).ready(function(){
     });
 
 
- 
-        $.ajax({
-            url: '/board/create/',
-            method: 'GET'
-        }).done(function(response){
-            $('.boards').append(response);
-        });
+    $.ajax({
+        url: '/board/create/',
+        method: 'GET'
+    }).done(function(response){
+        $('.boards').append(response);
+    });
     
 
     // loadAjaxContent('/boards/', $('.boards'));

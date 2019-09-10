@@ -59,3 +59,24 @@ body{
     position: relative;
 
 }
+
+.card-content{
+
+    list-style-type: none;
+
+}
+
+.btn.btn-primary{
+
+    padding: 0px;
+    margin-left: -70px;
+    margin-top: 40px;
+}
+
+.btn-secondary{
+
+    position: relative;
+    right: 350;
+    top: 20;
+
+}

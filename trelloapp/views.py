@@ -1,9 +1,13 @@
-from django.shortcuts import render,redirect,get_object_or_404
-from django.views.generic.base import TemplateView
-from trelloapp.models import Board,TrelloList,Card
-from django.contrib.auth.models import User
-from .forms import PostForm,TrelloListForm,TrelloCardForm
+import json
 
+
+from django.shortcuts import render,redirect,get_object_or_404
+from django.views.generic.base import TemplateView, View
+from django.contrib.auth.models import User
+from django.http import HttpResponse, JsonResponse
+
+from trelloapp.models import Board,TrelloList,Card
+from .forms import PostForm,TrelloListForm,TrelloCardForm
 
 # Create your views here.
 
@@ -71,7 +75,7 @@ class BoardView(TemplateView):
 
 
 
-class ListOfBoards(TemplateView):
+class ListOfBoards(TemplateView):   
     """ Board list page
     """
     template_name = 'trelloapp/boards.html'
@@ -219,8 +223,26 @@ class CardList(TemplateView):
             'list_id': list_id,
         }
         return render(request, self.template_name, context)
+        
+        #return JsonResponse(context)
 
+class UpdateListView(View):
 
-   
+    def get(self, request, **kwargs):
+        board_id = kwargs.get('board_id')
+        list_id = kwargs.get('list_id')
+        blist = get_object_or_404(TrelloList, id=list_id, board__id=board_id)
+        blist.title =  request.GET.get('title')
+        blist.save()
+        return JsonResponse({'title': blist.title})
 
+class UpdateCardView(View):
 
+    def get(self, request, **kwargs):
+        board_id = kwargs.get('board_id')
+        list_id = kwargs.get('list_id')
+        card_id = kwargs.get('card_id')
+        bcard = get_object_or_404(Card, id=card_id, trello_list__id=list_id)
+        bcard.title = request.GET.get('title')
+        bcard.save()
+        return JsonResponse({'title':bcard.title})

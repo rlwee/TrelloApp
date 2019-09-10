@@ -1,21 +1,60 @@
 
 <div class="list-containers">
+    {% csrf_token %}
     <ul class="list-view">
         {% for list in lists %}
             <div class="list-section" data-cards="{% url 'cardviews' board.id list.id %}">
-                <a href="{% url 'addcard' pk=board.id list_id=list.pk %}">Add Card</a>
-                    <li class="list-content" data-url="" data-id="{{ list.id }}">{{list.title}}</li>
+                <a class="a" href="{% url 'addcard' pk=board.id list_id=list.pk %}">Add Card</a>
+                <button type="button" class="btn btn-primary" data-remote="{% url 'addcard' pk=board.id list_id=list.pk %}" data-toggle="modal" data-target="#exampleModalCenter">
+                        Add Card
+                </button>
+                    <li class="list-content" 
+                        data-url="{% url 'listviews' pk=board.id %}" 
+                        data-id="{{ list.id }}" 
+                        contenteditable="true"
+                        data-title="{{ list.title }}"
+                        data-update="{% url 'list_update' board.id list.id %}">{{list.title}}
+                    </li>
                         <div class="edit-delete-list-button">
-                            <a class="edit-list-button" href="{% url 'addcard' pk=board.id list_id=list.pk %}">Edit List</a>
                         </div>
-                            <div data-id="{{ list.id }}" class="card-container" data-url="{% url 'cardviews' board_id=board.id list_id=list.id %}">
+
+                            <div data-id="{{ list.id }}" 
+                            class="card-container" 
+                            data-url="{% url 'cardviews' board_id=board.id list_id=list.id %}"
+                            >
                                 <!-- card data goes here -->
                                 
                             </div>
             </div>
+
+
+
            
         {% empty %}
-        <p>no list </p>
+             <p>no list </p>
         {% endfor %}
     </ul>
 </div>
+<!-- Button trigger modal -->
+
+      <!-- Modal -->
+      <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalCenterTitle">Card</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              ...
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      

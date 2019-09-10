@@ -15,14 +15,52 @@ $(document).ready(function(){
         $($cardContainer).each(function(index){
             var cardURL = $(this).data('url');
             loadCards(cardURL, $(this));
-            console.log(cardURL, 'url');
+            //console.log(cardURL, 'url');
         });
+
 
         var $listContent = $('.list-content');
 
-        $($listContent).click(function(){
-        editList($(this));
-        })
+        // $($listContent).click(function(event){
+        //     var listURL = $(this).data('url');
+        //     var esc = event.which==27,
+        //         enter = event.which==13,
+        //         el = event.target,
+        //         data = {};
+
+        //     if(esc){
+        //         document.execCommand('undo');
+        //         el.blur();
+        //     }else if (enter){
+        //         var edit = $(this).text();
+        //         var editID = $(this).data('id');
+        //         editList(listURL, data, $(this));
+        //     }
+        // });
+
+
+        $('.list-content').on('blur', function(){
+            var url = $(this).data('update');
+            var oldValue = $(this).data('title');
+            var newTitle = $(this).text();
+            var csrf = $('input[name="csrfmiddlewaretoken"]').val();
+           
+            if(newTitle.length == 0) {
+                $(this).text(oldValue);
+            } else {
+                $.ajax({
+                    url: url,
+                    method: 'get',
+                    data: {'title': newTitle}
+                }).done(function(response){
+                    console.log(response)
+                });
+            }
+        });
+
+        $()
+        
+
 
 
     });
@@ -41,14 +79,46 @@ $(document).ready(function(){
             method: 'GET',
         }).done(function(response){
             element.html(response);
-            var cardsElement = $('.card-section');
+            //var cardsElement = $('.card-section');
+
+            editCard();
+
+        $('#exampleModalCenter').on('shown.bs.modal',function(e){
+            var remoteUrl = $(e.relatedTarget).data('remote');
+            var modal = $(this);
+
+            $.ajax({
+                 'method': 'get',
+                 'url': remoteUrl
+            }).done(function(response){
+                    modal.find('.modal-body').html(response);  
+                }); 
         })
 
+        
+
+    })
+
+}
+
+
+    function editCard(){
+        $('.card-content').on('blur', function(){
+            var url =  $(this).data('update');
+            var oldValue = $(this).data('title');
+            var newTitle = $(this).text();
+
+            $.ajax({
+                url: url,
+                method: 'get',
+                data: {'title': newTitle}
+            }).done(function(response){
+                console.log(response)
+            })
+
+        });
     }
 
-    function editList(element){
-        element.slideUp();
-    }
 
 
 });

@@ -1,0 +1,9 @@
+{% extends 'trelloapp/trellobase.html' %}
+{% block title %}Trello-Dashboard{% endblock %}
+{% block board %}<a class="navbar-brand" href="{% url 'detail' pk=board.pk %}">{{board.title}}</a>{% endblock %}
+
+{% block content %}
+    <div>
+   
+    </div>
+{% endblock %}

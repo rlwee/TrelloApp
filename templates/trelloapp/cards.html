@@ -3,7 +3,10 @@
         <ul class="list-view">
             {% for card in cards %}
                 <div class="card-section" data-id = "{{ list_id }}" >
-                <a href="#"><li class="list-content">{{card.title}}</li></a>
+                <li class="card-content"
+                data-title="{{ car.title }}"
+                data-update="{% url 'card_update' board_id list_id card.id %}" 
+                contenteditable="true">{{card.title}}</li>
                     {% empty %}
                 <p>no card </p>
                 </div>
