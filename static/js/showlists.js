@@ -21,24 +21,6 @@ $(document).ready(function(){
 
         var $listContent = $('.list-content');
 
-        // $($listContent).click(function(event){
-        //     var listURL = $(this).data('url');
-        //     var esc = event.which==27,
-        //         enter = event.which==13,
-        //         el = event.target,
-        //         data = {};
-
-        //     if(esc){
-        //         document.execCommand('undo');
-        //         el.blur();
-        //     }else if (enter){
-        //         var edit = $(this).text();
-        //         var editID = $(this).data('id');
-        //         editList(listURL, data, $(this));
-        //     }
-        // });
-
-
         $('.list-content').on('blur', function(){
             var url = $(this).data('update');
             var oldValue = $(this).data('title');
@@ -58,20 +40,10 @@ $(document).ready(function(){
             }
         });
 
-        $()
-        
 
 
 
     });
-    // var $cardContainer = $('.card-container');
-
-    // $($cardContainer).each(function(index){
-    //     var cardID = $(this).data('id');
-    //     var cardURL = $(this).data('url');
-    //     loadCards(cardID, $(this));
-    //     console.log(cardURL, 'url');
-    // });
 
     function loadCards(url, element){
         $.ajax({
@@ -82,21 +54,8 @@ $(document).ready(function(){
             //var cardsElement = $('.card-section');
 
             editCard();
-
-        $('#exampleModalCenter').on('shown.bs.modal',function(e){
-            var remoteUrl = $(e.relatedTarget).data('remote');
-            var modal = $(this);
-
-            $.ajax({
-                 'method': 'get',
-                 'url': remoteUrl
-            }).done(function(response){
-                    modal.find('.modal-body').html(response);  
-                }); 
-        })
-
-        
-
+            addButton();
+       
     })
 
 }
@@ -117,6 +76,54 @@ $(document).ready(function(){
             })
 
         });
+    }
+
+
+    function addButton(){
+        $('#card-modal').on('shown.bs.modal',function(event){
+            var remoteUrl = $(event.relatedTarget).data('remote');
+            var modal = $(this);
+
+            $.ajax({
+                 'method': 'get',
+                 'url': remoteUrl
+            }).done(function(response){
+                    modal.find('.modal-body').html(response);
+                    //console.log(response, 'bla')
+                    createCard();
+                }); 
+
+        });
+    }
+
+    function createCard(){
+        $('.card-form').on('submit',function(event){
+            event.preventDefault();
+            var cardFormAction = $(this).attr('action');
+            console.log(cardFormAction, 'action');
+            var cardData = $(this).serialize();
+        
+            $.ajax({
+                url: cardFormAction,
+                data: cardData,
+                method: 'POST',
+
+                
+                
+            }).done(function(response){
+                event.preventDefault();
+                var listID = response.list_id;
+                var cardContainer = $(`#list-${listID}`);
+                var card_template = `<li class="card-content" data-title="" data-update="/board/${response.board_id}/list/${response.list_id}/card/${response.id}/update/" contenteditable="true">${response.title}</li>`;
+
+                $(cardContainer).find('.list-view').append(card_template);
+                $('#card-modal').modal('hide');
+
+                console.log(response, 'done');
+            })
+        });
+
+
     }
 
 

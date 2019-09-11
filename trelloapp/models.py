@@ -29,3 +29,6 @@ class Card(models.Model):
     date_created = models.DateTimeField(default = timezone.now())
     labels = models.CharField(max_length=50)
     trello_list = models.ForeignKey('TrelloList', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title

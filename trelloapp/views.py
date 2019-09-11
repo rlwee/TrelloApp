@@ -5,6 +5,7 @@ from django.shortcuts import render,redirect,get_object_or_404
 from django.views.generic.base import TemplateView, View
 from django.contrib.auth.models import User
 from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from trelloapp.models import Board,TrelloList,Card
 from .forms import PostForm,TrelloListForm,TrelloCardForm
@@ -182,19 +183,24 @@ class CardCreateView(TemplateView):
     form = TrelloCardForm
 
     def get(self, request, **kwargs):
-        #import pdb; pdb.set_trace()
+        # import pdb; pdb.set_trace()
         id = kwargs.get('list_id')
+        board_id = kwargs.get('pk')
+        board = get_object_or_404(Board, pk = board_id)
         lists = get_object_or_404(TrelloList, pk=id)
         card = Card.objects.filter(trello_list=lists)
         form = self.form()
         context = {
+            'board':board,
             'lists':lists,
             'card':card,
             'form':form,
         }
         return render(request, self.template_name, context)
-
+    
+    @csrf_exempt
     def post(self,request,**kwargs):
+  
         board_id = kwargs.get('pk')
         list_id = kwargs.get('list_id')
         lists = get_object_or_404(TrelloList, pk=list_id)
@@ -221,6 +227,7 @@ class CardList(TemplateView):
             'cards':cards,
             'board_id': board_id,
             'list_id': list_id,
+            'board_list':board_list,
         }
         return render(request, self.template_name, context)
         
@@ -246,3 +253,27 @@ class UpdateCardView(View):
         bcard.title = request.GET.get('title')
         bcard.save()
         return JsonResponse({'title':bcard.title})
+
+class CreateCardView(View):
+
+    form = TrelloCardForm
+
+    def post(self, request, **kwargs):
+        board_id = kwargs.get('pk')
+        list_id = kwargs.get('list_id')
+        lists = get_object_or_404(TrelloList, pk=list_id)
+        card = Card.objects.filter(trello_list=lists)
+        form = self.form(request.POST)
+        error = JsonResponse({'error':'Please input all fields'})
+        if form.is_valid():
+            card = form.save(commit=False)
+            card.trello_list = lists
+            card.save()
+            return JsonResponse({'title':card.title, 'id':card.id,'list_id':lists.id, 'board_id':board_id})
+        else:
+            data = {
+                'result':'error',
+                'message': 'Form Invalid',
+                'form':'oops.'
+            }
+            return JsonResponse(data)
