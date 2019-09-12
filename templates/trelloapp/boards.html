@@ -6,7 +6,8 @@
     <div class="detail">
         <ul>
             {% for board in boards %}
-                <li><a class="boardlist" href="{% url 'board' board_id=board.pk %}">{{board.title}}</a></li>
+                <li><a class="boardlist"
+                href="{% url 'board' board_id=board.pk %}">{{board.title}}</a></li>
                 {% empty %}
                 <p class="noboard">No boards yet, create boards </p>   
             {% endfor %}

@@ -1,13 +1,17 @@
-{% extends 'trelloapp/trellobase.html' %}
 
-{% block title %}Trello-Dashboard{% endblock %}
-{% block board %}<a class="navbar-brand" href="{% url 'board' board_id=boards.pk %}">{{boards.title}}</a>{% endblock %}
-{% block content %}
+
+
+
     <div class="edit-container">
-        <form method="POST" novalidate>{% csrf_token %}
+        <form method="POST" 
+        data-id="{{ boards.id }}" 
+        action="{% url 'edit_board' boards.id %}"
+        class="board-form" 
+        novalidate>{% csrf_token %}
             {% for field in form %}
 
             <p>{{field.label}} {{field}}</p>
+            <p class="error"></p>
 
             {% endfor %}
 
@@ -15,5 +19,7 @@
         </form>
     </div>
 
+    <!--<div class="delete-button">
+        <a href="{% url 'deleteboard' board_id=boards.pk %}" class="btn btn-secondary btn-lg " role="button" aria-disabled="true">Delete board</a>
+    </div>-->
 
-{% endblock %}

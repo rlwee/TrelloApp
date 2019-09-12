@@ -69,7 +69,32 @@ body{
 .btn.btn-primary{
 
     padding: 0px;
-    margin-left: -70px;
-    margin-top: 40px;
+
+ 
 }
 
+.btn.btn-primary-board{
+    
+    background-color: transparent;
+
+}
+
+#boardbutton{
+
+    position: relative;
+    top: 8px;
+
+}
+
+#boardedit{
+
+    position: relative;
+    top: -10px;
+    
+
+}
+
+#boardedit:hover{
+
+    border: 2px solid #080808;
+}

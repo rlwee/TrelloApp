@@ -14,6 +14,8 @@ from trelloapp.views import (Dash,
                              UpdateListView,
                              UpdateCardView,
                              CreateCardView,
+                             BoardEdit,
+                             BoardViewTrelloBase
                             )
 
 urlpatterns = [
@@ -37,5 +39,6 @@ urlpatterns = [
     path('board/<int:board_id>/list/<int:list_id>/card/<int:card_id>/update/',UpdateCardView.as_view(), name='card_update'),
 
     path('board/<int:board_id>/list/<int:list_id>/card/added/',CreateCardView.as_view(), name='create_card'),
+    path('board/edit/<int:board_id>/edited/',BoardEdit.as_view(), name='edit_board'),
 
 ]

@@ -4,11 +4,12 @@
     <ul class="list-view">
         {% for list in lists %}
             <div class="list-section" data-cards="{% url 'cardviews' board.id list.id %}">
-                <a class="a" href="{% url 'addcard' pk=board.id list_id=list.pk %}">Add Card</a>
+                <!--<a class="a" href="{% url 'addcard' pk=board.id list_id=list.pk %}">Add Card</a>-->
                 <button type="button" class="btn btn-primary" data-remote="{% url 'addcard' board.id list.pk %}" data-toggle="modal" data-target="#card-modal">
                         Add Card
                 </button>
                     <li class="list-content" 
+                        
                         data-url="{% url 'listviews' pk=board.id %}" 
                         data-id="{{ list.id }}" 
                         contenteditable="true"

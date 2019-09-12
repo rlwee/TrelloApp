@@ -7,8 +7,10 @@
         <link rel="stylesheet" href="{% static 'css/trelloapp.css' %}">
     </head>
     <body>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <nav id = "board-{{board.id}}" class="navbar navbar-expand-lg navbar-light bg-light">
                 {% block board %}{% endblock %}
+                {% block boardAjax %}{% endblock %}
+            
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -31,11 +33,10 @@
         </div>
 
 
+        <script src="{% static 'lib/jquery-2.2.4.min.js' %}"></script>
 
-        <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <script src="{% static 'lib/bootstrap.min.js' %}"></script>
         
-  
         <script src="{% static 'js/showlists.js' %}"></script>
         
     </body>

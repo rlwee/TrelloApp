@@ -74,6 +74,24 @@ class BoardView(TemplateView):
             return redirect('board', board_id=board.id)
         return render(request, self.template_name, {'form':form,'board':board})
 
+class BoardViewTrelloBase(TemplateView):
+
+    template_name = 'trelloapp/trellobase.html'
+    form = TrelloListForm
+    
+    def get(self, request, **kwargs):
+        id = kwargs.get('board_id')
+        board = get_object_or_404(Board, pk=id)
+        boardlist = TrelloList.objects.filter(board=board)
+        form = self.form()
+        context = {
+            'board':board,
+            'boardlist':boardlist,
+            'form':form
+        }
+        return render(request, self.template_name, context)
+    
+
 
 
 class ListOfBoards(TemplateView):   
@@ -124,8 +142,6 @@ class EditBoard(TemplateView):
 
 class DeleteBoard(TemplateView):
 
-    template_name = 'trelloapp/boards.html'
-
     def get(self,request,**kwargs):
         id = kwargs.get('board_id')
         boards = Board.objects.get(pk=id, owner=request.user)
@@ -133,6 +149,11 @@ class DeleteBoard(TemplateView):
             boards.delete()
             return redirect('listofboards')
 
+class DeleteBoardNew(TemplateView):
+    pass
+
+
+EditBoard
 class EditList(TemplateView):
 
     template_name = 'trelloapp/editlist.html'
@@ -234,8 +255,8 @@ class CardList(TemplateView):
         #return JsonResponse(context)
 
 class UpdateListView(View):
-
-    def get(self, request, **kwargs):
+    @csrf_exempt
+    def post(self, request, **kwargs):
         board_id = kwargs.get('board_id')
         list_id = kwargs.get('list_id')
         blist = get_object_or_404(TrelloList, id=list_id, board__id=board_id)
@@ -271,9 +292,19 @@ class CreateCardView(View):
             card.save()
             return JsonResponse({'title':card.title, 'id':card.id,'list_id':lists.id, 'board_id':board_id})
         else:
-            data = {
-                'result':'error',
-                'message': 'Form Invalid',
-                'form':'oops.'
-            }
-            return JsonResponse(data)
+            return JsonResponse({}, status=400)
+
+class BoardEdit(View):
+
+    form = PostForm
+
+    def post(self,request,**kwargs):
+        id = kwargs.get('board_id')
+        boards = get_object_or_404(Board, pk=id)
+        form = self.form(request.POST, instance=boards)
+        if form.is_valid():
+            board = form.save(commit=False)
+            board.owner = request.user
+            board.save()
+            return JsonResponse({'title':board.title,'board_id':boards.id})
+        return JsonResponse({}, status=400)
