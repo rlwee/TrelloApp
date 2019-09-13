@@ -1,6 +1,8 @@
 $(document).ready(function(){
     boardButton();
-
+    createBoard();
+    
+    
     const $listContainer = $('.list-container');
     const url = $listContainer.data('url');
 
@@ -28,7 +30,7 @@ $(document).ready(function(){
             var oldValue = $(this).data('title');
             var newTitle = $(this).text();
             var csrf = $('input[name="csrfmiddlewaretoken"]').val();
-
+            console.log(csrf, 'test')
             
            
             if(newTitle.length == 0) {
@@ -37,7 +39,7 @@ $(document).ready(function(){
                 $.ajax({
                     url: url,
                     method: 'POST',
-                    data: {'title': newTitle, 'csrf':csrf}
+                    data: {'title': newTitle, 'csrfmiddlewaretoken':csrf}
                 }).done(function(response){
                     console.log(response)
                 });
@@ -70,14 +72,15 @@ $(document).ready(function(){
             var url =  $(this).data('update');
             var oldValue = $(this).data('title');
             var newTitle = $(this).text();
+            var csrf = $('input[name="csrfmiddlewaretoken"]').val();
 
             if (newTitle.length == 0){
                 $(this).text(oldValue);
             } else {
                 $.ajax({
                 url: url,
-                method: 'GET',
-                data: {'title': newTitle}
+                method: 'POST',
+                data: {'title': newTitle, 'csrfmiddlewaretoken':csrf}
             }).done(function(response){
                 console.log(response)
             })
@@ -125,7 +128,14 @@ $(document).ready(function(){
                 $('#card-modal').modal('hide');
 
                 console.log(response, 'done');
-            })
+            }).fail(function(response){
+                //alert('invalid input');
+                var errorMessage = '<p>This field is required</p>';
+
+                $('.error-card').html(errorMessage);
+
+
+            });
         });
     }
 
@@ -142,13 +152,14 @@ $(document).ready(function(){
             }).done(function(response){
                 modal.find('.modal-body').html(response);
                 editBoard();
-            });get
+            })
             
         });
     }
 
     function editBoard(){
-        $('.board-form').on('submit',function(event){
+        $(document).on('submit', '.board-form', function(event){
+            console.log(event, 'text')
             event.preventDefault();
             var boardFormAction = $(this).attr('action');
             var boardData = $(this).serialize();
@@ -156,14 +167,13 @@ $(document).ready(function(){
             $.ajax({
                 url:boardFormAction,
                 data: boardData,
-                method: 'GET'
+                method: 'POST'
             }).done(function(response){
                 event.preventDefault();
                 console.log(response, 'response')
-                var boardID = response.board_id;
                 $('#boardbutton').text(`${response.title}`);
                 $('.close').trigger('click');
-                console.log(response, 'done'); 
+                //console.log(response, 'done'); 
             }).fail(function(response){
                 //alert('invalid input');
                 var errorMessage = '<p>Board title is required</p>';
@@ -171,11 +181,57 @@ $(document).ready(function(){
                 $('.error').html(errorMessage);
 
 
-            })
+            });
 
         });
     }
 
+    function createBoard(){
+        $('#board-modal').on('shown.bs.modal',function(event){
+            var remoteUrl = $(event.relatedTarget).data('remote');
+            var modal = $(this);
+            $.ajax({
+                method: 'get',
+                url: remoteUrl
+            }).done(function(response){
+                modal.find('.modal-body').html(response);
+
+                boardSubmit();
+            });
+        });
+    }
+
+    function boardSubmit(){
+        $('#board-form').on('submit',function(event){
+            event.preventDefault();
+            var boardFormAction = $(this).attr('action');
+            var boardData = $(this).serialize();
+            
+            $.ajax({
+                method:'POST',
+                url:boardFormAction,
+                data:boardData
+            }).done(function(response){
+                event.preventDefault();
+                window.location.href = "/board/detail/" + response.board_id
+                console.log(response, 'test')
+                $('.close').trigger('click');
+            }).fail(function(response){
+                //alert('invalid input');
+                var errorMessage = '<p>This field is required</p>';
+
+                $('.error-board-create').html(errorMessage);
+
+
+            });
+        })
+    }
+
+    function listCreate(){
+        $('#list-form').on('submit',function(event){
+            
+        })
+    }
+
 
 });
-

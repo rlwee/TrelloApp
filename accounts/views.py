@@ -51,3 +51,11 @@ class LogIn(TemplateView):
                 messages.error(request, f"Invalid username or password")
         return render(request, self.template_name, {'form':form})
 
+class LogOut(TemplateView):
+
+    template_name = 'accounts.login.html'
+
+    def get(self,request,**kwargs):
+        logout(request)
+        messages.info(request,"Logged out")
+        return redirect('login')

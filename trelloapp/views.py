@@ -23,6 +23,15 @@ class Dash(TemplateView):
         else:
             return redirect('login')
 
+class Base(TemplateView):
+
+    template_name = 'trelloapp/trellobase.html'
+
+    def get(self,request,**kwargs):
+        boards = Board.objects.filter(owner=request.user)
+        #owner = Board.objects.all()
+        return render(request, self.template_name,{'boards':boards})
+
 
 class BoardCreateView(TemplateView):
 
@@ -42,7 +51,7 @@ class BoardCreateView(TemplateView):
             board.owner = request.user
             board.save()
             return redirect('listofboards')
-        return render(request, self.template_name,{'form':form})
+        return render(request, self.template_name,{'form':form,'board':board})
 
 
 class BoardView(TemplateView):
@@ -90,7 +99,7 @@ class BoardViewTrelloBase(TemplateView):
             'form':form
         }
         return render(request, self.template_name, context)
-    
+    Dash
 
 
 
@@ -153,7 +162,7 @@ class DeleteBoardNew(TemplateView):
     pass
 
 
-EditBoard
+
 class EditList(TemplateView):
 
     template_name = 'trelloapp/editlist.html'
@@ -219,7 +228,6 @@ class CardCreateView(TemplateView):
         }
         return render(request, self.template_name, context)
     
-    @csrf_exempt
     def post(self,request,**kwargs):
   
         board_id = kwargs.get('pk')
@@ -255,25 +263,25 @@ class CardList(TemplateView):
         #return JsonResponse(context)
 
 class UpdateListView(View):
-    @csrf_exempt
+
     def post(self, request, **kwargs):
         board_id = kwargs.get('board_id')
         list_id = kwargs.get('list_id')
         blist = get_object_or_404(TrelloList, id=list_id, board__id=board_id)
-        blist.title =  request.GET.get('title')
+        blist.title =  request.POST.get('title')
         blist.save()
         return JsonResponse({'title': blist.title})
 
 class UpdateCardView(View):
 
-    def get(self, request, **kwargs):
+    def post(self, request, **kwargs):
         board_id = kwargs.get('board_id')
         list_id = kwargs.get('list_id')
         card_id = kwargs.get('card_id')
         bcard = get_object_or_404(Card, id=card_id, trello_list__id=list_id)
-        bcard.title = request.GET.get('title')
+        bcard.title = request.POST.get('title')
         bcard.save()
-        return JsonResponse({'title':bcard.title})
+        return JsonResponse({'title': bcard.title})
 
 class CreateCardView(View):
 
@@ -291,8 +299,8 @@ class CreateCardView(View):
             card.trello_list = lists
             card.save()
             return JsonResponse({'title':card.title, 'id':card.id,'list_id':lists.id, 'board_id':board_id})
-        else:
-            return JsonResponse({}, status=400)
+
+        return JsonResponse({}, status=400)
 
 class BoardEdit(View):
 
@@ -307,4 +315,18 @@ class BoardEdit(View):
             board.owner = request.user
             board.save()
             return JsonResponse({'title':board.title,'board_id':boards.id})
+        return JsonResponse({}, status=400)
+
+class BoardCreate(View):
+
+    form = PostForm
+
+    def post(self, request, **kwargs):
+
+        form = self.form(request.POST)
+        if form.is_valid():
+            board = form.save(commit=False)
+            board.owner = request.user
+            board.save()
+            return JsonResponse({'title':board.title, 'board_id':board.id})
         return JsonResponse({}, status=400)

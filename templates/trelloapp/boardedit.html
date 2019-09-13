@@ -5,8 +5,9 @@
     <div class="edit-container">
         <form method="POST" 
         data-id="{{ boards.id }}" 
-        action="{% url 'edit_board' boards.id %}"
+        
         class="board-form" 
+        action="{% url 'edit_board' boards.id %}"
         novalidate>{% csrf_token %}
             {% for field in form %}
 

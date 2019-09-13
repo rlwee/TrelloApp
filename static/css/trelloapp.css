@@ -79,6 +79,8 @@ body{
 
 }
 
+
+
 #boardbutton{
 
     position: relative;
@@ -97,4 +99,37 @@ body{
 #boardedit:hover{
 
     border: 2px solid #080808;
+    
+}
+
+#boardcreate{
+
+    position: relative;
+    top: 0px;
+    color: rgba(0,0,0,.5);
+
+}
+
+#boardcreate:hover{
+
+    color: black;
+
+}
+
+#logout{
+
+    position: relative;
+    left: 1300px;
+
+}
+
+#dropdown{
+
+    padding: 0px;
+    position: relative;
+    top: 8px;
+    color: #606977;
+    background-color: transparent;
+    border: none;
+
 }
