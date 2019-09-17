@@ -1,3 +1,4 @@
+from django.core.mail.backends import smtp
 """
 Django settings for trelloproject project.
 
@@ -31,15 +32,26 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'trelloapp',
+    'accounts',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'trelloapp',
-    'accounts'
+    
+    
 ]
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'hellotrelloclone@gmail.com'
+EMAIL_HOST_PASSWORD = 'kajlyglpkgpptmtw'
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'hellotrelloclone@gmail.com'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

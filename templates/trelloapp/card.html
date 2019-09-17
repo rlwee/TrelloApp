@@ -1,9 +1,19 @@
-{% extends 'trelloapp/trellobase.html' %}
-{% block title %}Trello-Dashboard{% endblock %}
-{% block board %}<a class="navbar-brand" href="{% url 'detail' pk=board.pk %}">{{board.title}}</a>{% endblock %}
 
-{% block content %}
-    <div>
-   
+{% csrf_token %}
+    <div >
+        <div class="card-title">
+            <p class="card-detail-title"
+                id="cardedit"
+                contenteditable="true"
+               data-title="{{card.title}}"
+               data-update="{% url 'update_card' board_id list_id card.id %}">{{card.title}}</p><p class="card-description">in list <a href="#">{{blist.title}}</a></p>
+            </div>
+       
+        <div class="card-description">
+            <p >Description:</p><p class="card-detail-label"
+            contenteditable="true" 
+            data-label="{{card.labels}}"
+            data-update="{% url 'update_label' board_id list_id card.id %}">{{card.labels}}</p> 
+        </div>
+
     </div>
-{% endblock %}

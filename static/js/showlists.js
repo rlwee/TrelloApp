@@ -1,6 +1,8 @@
 $(document).ready(function(){
     boardButton();
     createBoard();
+    listCreate();
+    
     
     
     const $listContainer = $('.list-container');
@@ -12,13 +14,15 @@ $(document).ready(function(){
     }).done(function(response){
         $listContainer.html(response);
         var listsElement = $('.list-section');
-
+        
 
         var $cardContainer = $('.card-container');
 
         $($cardContainer).each(function(index){
             var cardURL = $(this).data('url');
+            
             loadCards(cardURL, $(this));
+            
             //console.log(cardURL, 'url');
         });
 
@@ -37,11 +41,13 @@ $(document).ready(function(){
                 $(this).text(oldValue);
             } else {
                 $.ajax({
+                    
                     url: url,
                     method: 'POST',
                     data: {'title': newTitle, 'csrfmiddlewaretoken':csrf}
                 }).done(function(response){
                     console.log(response)
+                    
                 });
             }
         });
@@ -49,8 +55,11 @@ $(document).ready(function(){
 
 
 
+    }).fail(function(response){
+        var errorMessage = '<p>This field is required!</p>';
+        $('.error-list-create').html(errorMessage);
     });
-
+    
     function loadCards(url, element){
         $.ajax({
             url: url,
@@ -58,10 +67,13 @@ $(document).ready(function(){
         }).done(function(response){
             element.html(response);
             //var cardsElement = $('.card-section');
-
+            
+            dragCard();
             editCard();
+            
             addButton();
-       
+            
+        
     })
 
 }
@@ -83,6 +95,7 @@ $(document).ready(function(){
                 data: {'title': newTitle, 'csrfmiddlewaretoken':csrf}
             }).done(function(response){
                 console.log(response)
+                
             })
             }
             
@@ -126,7 +139,7 @@ $(document).ready(function(){
 
                 $(cardContainer).find('.list-view').append(card_template);
                 $('#card-modal').modal('hide');
-
+                
                 console.log(response, 'done');
             }).fail(function(response){
                 //alert('invalid input');
@@ -159,28 +172,20 @@ $(document).ready(function(){
 
     function editBoard(){
         $(document).on('submit', '.board-form', function(event){
-            console.log(event, 'text')
             event.preventDefault();
             var boardFormAction = $(this).attr('action');
             var boardData = $(this).serialize();
-            var hasError;
             $.ajax({
                 url:boardFormAction,
                 data: boardData,
                 method: 'POST'
             }).done(function(response){
                 event.preventDefault();
-                console.log(response, 'response')
                 $('#boardbutton').text(`${response.title}`);
                 $('.close').trigger('click');
-                //console.log(response, 'done'); 
             }).fail(function(response){
-                //alert('invalid input');
                 var errorMessage = '<p>Board title is required</p>';
-
                 $('.error').html(errorMessage);
-
-
             });
 
         });
@@ -227,11 +232,111 @@ $(document).ready(function(){
         })
     }
 
+
+
     function listCreate(){
-        $('#list-form').on('submit',function(event){
-            
+        $(document).on('submit','#list-form',function(event){
+            event.preventDefault();
+
+            var listFormAction = $(this).attr('action');
+            var listdata = $(this).serialize();
+
+            $.ajax({
+                method:'POST',
+                url:listFormAction,
+                data:listdata
+            }).done(function(response){
+                
+
+            }).fail(function(response){
+                var errorMessage = '<p>This field is required!</p>';
+                $('.error-list-create').html(errorMessage);
+            });
         })
     }
 
+    function dragCard(){
+        $('.card').draggable();
+        $('.list-section').droppable({
+            drop:function(){
+                alert('dropped');
+            }
+        });
+
+    }
+
+
+    $(document).on('shown.bs.modal','#card-view-modal',function(event){
+        event.preventDefault();
+        var remoteUrl = $(event.relatedTarget).data('remote');
+        var modal = $(this);
+        $.ajax({
+            
+            url:remoteUrl,
+            method:'GET'
+            
+        }).done(function(response){
+            event.preventDefault();
+            modal.find('.modal-body').html(response);
+            
+        });
+
+
+    });
+
+
+        
+        $(document).on('blur','.card-detail-title', function(){
+            var url = $(this).data('update');
+            var oldValue = $(this).data('title');
+            var newTitle = $(this).text();
+            var csrf = $('input[name="csrfmiddlewaretoken"]').val();
+            
+           
+            if(newTitle.length == 0) {
+                $(this).text(oldValue);
+            } else {
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    data: {'title': newTitle, 'csrfmiddlewaretoken':csrf}
+                }).done(function(response){
+                    console.log(response.title, 'respondcard')
+                    $('#cardedit').text(`${response.title}`);
+                });
+            }
+        });
+
+
+
+
+    
+        $(document).on('blur','.card-detail-label', function(){
+            var url = $(this).data('update');
+            var oldValue = $(this).data('label');
+            var newLabel = $(this).text();
+            var csrf = $('input[name="csrfmiddlewaretoken"]').val();
+
+            if(newLabel.length == 0){
+                $(this).text(oldValue);
+            } else {
+                $.ajax({
+                    url:url,
+                    method:'POST',
+                    data: {'labels': newLabel, 'csrfmiddlewaretoken':csrf}
+                }).done(function(response){
+                    
+                    
+                });
+            }
+
+        });
+
+    
+        
+
+        
+    
+        
 
 });

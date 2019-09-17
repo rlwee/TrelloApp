@@ -17,8 +17,13 @@ from trelloapp.views import (Dash,
                              BoardEdit,
                              BoardViewTrelloBase,
                              BoardCreate,
-                             BoardViewTrelloBase
-
+                             BoardViewTrelloBase,
+                             ListCreate,
+                             DragCard,
+                             CardView,
+                             CardTitleUpdate,
+                             CardLabelUpdate,
+                            
                             )
 
 urlpatterns = [
@@ -42,5 +47,11 @@ urlpatterns = [
     path('board/<int:board_id>/list/<int:list_id>/card/added/',CreateCardView.as_view(), name='create_card'),
     path('board/edit/<int:board_id>/edited/',BoardEdit.as_view(), name='edit_board'),
     path('board/created/', BoardCreate.as_view(), name='boardcreate'),
+    path('boards/lists/',BoardViewTrelloBase.as_view(), name='boardslist'),
+    path('board/<int:pk>/lists/View/',ListCreate.as_view(), name='list_views'),
+    path('board/<int:board_id>/list/<int:list_id>/card/<int:card_id>/',CardView.as_view(), name='card_views'),
+    path('board/<int:board_id>/list/<int:list_id>/card/<int:card_id>/update/title/',CardTitleUpdate.as_view(), name='update_card'),
+    path('board/<int:board_id>/list/<int:list_id>/card/<int:card_id>/update/label/',CardLabelUpdate.as_view(), name='update_label'),
 
+    
 ]

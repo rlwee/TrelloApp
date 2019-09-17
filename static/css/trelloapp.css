@@ -133,3 +133,36 @@ body{
     border: none;
 
 }
+
+#cards{
+
+    background-color: #606977;
+    margin: 1px;
+    padding: 1px;
+
+}
+
+.card-detail-title{
+
+    font-weight: bold;
+}
+
+.card-description{
+
+    position: relative;
+    bottom: 20;
+
+}
+
+.card-detail-label{
+
+    position: relative;
+    bottom: 20;
+
+}
+
+li{
+
+    list-style-type: none;
+
+}

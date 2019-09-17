@@ -5,13 +5,13 @@
 {% block content %}
 
 
-    <form id="list-form" method="POST" novalidate>{% csrf_token %}  
+    <form  method="POST"   novalidate>{% csrf_token %}  
     <div>
         {% for field in listform %}
             <p>{{ field.label }}</p>
             <p>{{ field }}</p>
-            <span>{{ field.errors }}</span>
-            <p class="error-list-create"></p>
+            
+            
         {% endfor %}
         <button type="submit">Create List</button>
     </div>

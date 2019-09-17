@@ -26,7 +26,7 @@ class Dash(TemplateView):
 class Base(TemplateView):
 
     template_name = 'trelloapp/trellobase.html'
-
+    #import pdb; pdb.set_trace()
     def get(self,request,**kwargs):
         boards = Board.objects.filter(owner=request.user)
         #owner = Board.objects.all()
@@ -293,7 +293,6 @@ class CreateCardView(View):
         lists = get_object_or_404(TrelloList, pk=list_id)
         card = Card.objects.filter(trello_list=lists)
         form = self.form(request.POST)
-        error = JsonResponse({'error':'Please input all fields'})
         if form.is_valid():
             card = form.save(commit=False)
             card.trello_list = lists
@@ -330,3 +329,72 @@ class BoardCreate(View):
             board.save()
             return JsonResponse({'title':board.title, 'board_id':board.id})
         return JsonResponse({}, status=400)
+
+
+class ListCreate(View):
+
+    form = TrelloListForm
+
+    def post(self, request, **kwargs):
+        board_id = kwargs.get('pk')
+        board = get_object_or_404(Board, pk=board_id)
+        form = self.form(request.POST)
+
+        if form.is_valid():
+            lists = form.save(commit=False)
+            lists.board = board
+            lists.save()
+            return JsonResponse({'title':lists.title})
+        return JsonResponse({}, status=400)
+
+class DragCard(View):
+
+    def post(self, request, **kwargs):
+        board_id = kwargs.get('pk')
+        list_id = kwargs.get('list_id')
+        lists = get_object_or_404(TrelloList, pk=list_id)
+        card = Card.objects.filter(trello_list=lists)
+        form = self.form(request.POST)
+        return JsonResponse({'title':card.title, 'id':card.id,'list_id':lists.id, 'board_id':board_id})
+
+class CardView(TemplateView):
+
+    template_name = 'trelloapp/card.html'
+
+    def get(self, request, **kwargs):
+        board_id = kwargs.get('board_id')
+        list_id = kwargs.get('list_id')
+        blist = TrelloList.objects.get(pk=list_id)
+        card_id = kwargs.get('card_id')
+        card = Card.objects.get(pk=card_id)
+        context = {
+            'board_id':board_id,
+            'card_id':card_id,
+            'card':card,
+            'list_id':list_id,
+            'blist':blist,
+        }
+        return render(request, self.template_name, context)
+
+class CardTitleUpdate(View):
+
+    def post(self, request, **kwargs):
+        board_id = kwargs.get('board_id')
+        list_id = kwargs.get('list_id')
+        card_id = kwargs.get('card_id')
+        bcard = get_object_or_404(Card, id=card_id, trello_list__id=list_id)
+        bcard.title = request.POST.get('title')
+        bcard.save()
+        return JsonResponse({'title': bcard.title,'card_id':bcard.id})
+
+class CardLabelUpdate(View):
+
+    def post(self, request, **kwargs):
+        board_id = kwargs.get('board_id')
+        list_id = kwargs.get('list_id')
+        card_id = kwargs.get('card_id')
+        bcard = get_object_or_404(Card, id=card_id, trello_list__id=list_id)
+        bcard.labels = request.POST.get('labels')
+        bcard.save()
+        return JsonResponse({'labels':bcard.labels})
+

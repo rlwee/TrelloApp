@@ -35,10 +35,10 @@ data-toggle="modal"
 data-target="#board-modal"
 >Edit Board</button>
     <div>
-        <form method="POST" novalidate>{% csrf_token %}
+        <form method="POST"  novalidate>{% csrf_token %}
             {% for field in form %}
             <label>Create New List {{ field.label }} {{ field }}</label>
-                <span>{{ field.errors }}</span>
+            <p class="error-list-create"></p>
             {% endfor %}
             <button type="submit">Save</button>
         </form>
@@ -58,14 +58,14 @@ data-target="#board-modal"
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="exampleModalCenterTitle">Board</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <div class="modal-body">
-              ...
-            </div>
-            <div class="modal-footer">
+              <div class="modal-body">
+                ...
+              </div>
+              <div class="modal-footer">
             </div>
           </div>
         </div>

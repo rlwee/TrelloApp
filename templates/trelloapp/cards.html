@@ -1,20 +1,54 @@
-{% block content %}
-{% csrf_token %}
-<div class="card-containers">
-        <ul class="list-view">
-            {% for card in cards %} 
-                <div class="card-section" id = "cards" data-id = "{{ list_id }}" >
-                
-                <li class="card-content"
-                id="list-{{board_list.id}}"
-                data-title="{{ card.title }}"
-                data-update="{% url 'card_update' board_id list_id card.id %}" 
-                contenteditable="true">{{card.title}}</li>
-                
 
-                </div>
+{% csrf_token %}
+<div class="card-containers ui-widget-header" id="card-content">
+        <ul class="list-view ui-widget-header">
+            {% for card in cards %} 
+                <!-- <a href="{% url 'card_views' board_id=board_id list_id=list_id card_id=card.id %}" class="card ui-widget-content" id = "cards" data-id = "{{ list_id }}" >
+                
+                    <li class="card-content "
+                        id="list-{{board_list.id}}"
+                        data-title="{{ card.title }}"
+                        data-update="{% url 'card_update' board_id list_id card.id %}" 
+                        contenteditable="true">
+                            {{card.title}}
+                    </li>
+                </a> -->
+                <li>
+                    <button type="button"
+                        id = "carddetail"
+                        class="btn btn-primary-card " 
+                        data-remote="{% url 'card_views' board_id list_id card.id %}" 
+                        
+                        data-toggle="modal" 
+                        data-target="#card-view-modal"
+                        >{{card.title}}
+                    </button>
+                </li>
+                
             {% endfor %}
         </ul>
 </div>
 
-{% endblock %}
+
+
+    <!-- Button trigger modal -->
+
+      <!-- Modal -->
+      <div class="modal fade" id="card-view-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalCenterTitle">Card</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              ...
+            </div>
+            <div class="modal-footer">
+            </div>
+          </div>
+        </div>
+      </div>
+      
