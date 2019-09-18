@@ -23,7 +23,7 @@ from trelloapp.views import (Dash,
                              CardView,
                              CardTitleUpdate,
                              CardLabelUpdate,
-                            
+                             DragCard,
                             )
 
 urlpatterns = [
@@ -52,6 +52,7 @@ urlpatterns = [
     path('board/<int:board_id>/list/<int:list_id>/card/<int:card_id>/',CardView.as_view(), name='card_views'),
     path('board/<int:board_id>/list/<int:list_id>/card/<int:card_id>/update/title/',CardTitleUpdate.as_view(), name='update_card'),
     path('board/<int:board_id>/list/<int:list_id>/card/<int:card_id>/update/label/',CardLabelUpdate.as_view(), name='update_label'),
+    path('board/<int:board_id>/list/<int:list_id>/card/<int:card_id>/dragged/card/',DragCard.as_view(), name='card_drag'),
 
     
 ]

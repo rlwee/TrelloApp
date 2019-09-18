@@ -354,7 +354,6 @@ class DragCard(View):
         list_id = kwargs.get('list_id')
         lists = get_object_or_404(TrelloList, pk=list_id)
         card = Card.objects.filter(trello_list=lists)
-        form = self.form(request.POST)
         return JsonResponse({'title':card.title, 'id':card.id,'list_id':lists.id, 'board_id':board_id})
 
 class CardView(TemplateView):

@@ -70,7 +70,6 @@ $(document).ready(function(){
             
             dragCard();
             editCard();
-            
             addButton();
             
         
@@ -256,10 +255,20 @@ $(document).ready(function(){
     }
 
     function dragCard(){
-        $('.card').draggable();
+        $('.draggable').draggable();
+        var cardUrl = $('#draggable').data('url');
+        var csrf = $('input[name="csrfmiddlewaretoken"]').val();
+        var newCard = $('.btn-primary-card')
+
         $('.list-section').droppable({
-            drop:function(){
+            drop:function(event, ui){
                 alert('dropped');
+                $.ajax({
+                    method:'POST',
+                    url:cardUrl,
+                    data:{'title':newCard,'csrfmiddlewaretoken':csrf}
+                })
+                
             }
         });
 
@@ -301,8 +310,12 @@ $(document).ready(function(){
                     method: 'POST',
                     data: {'title': newTitle, 'csrfmiddlewaretoken':csrf}
                 }).done(function(response){
+                    //edit card title in background
+                    var cardID = response.card_id
+                    var card = $(`#carddetail-${cardID}`)
                     console.log(response.title, 'respondcard')
-                    $('#cardedit').text(`${response.title}`);
+                    $(card).html(`${response.title}`);
+
                 });
             }
         });

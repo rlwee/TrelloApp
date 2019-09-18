@@ -3,8 +3,8 @@
   <ul class="list-view">
 
       {% for list in lists %}
-
-          <div class="list-section" data-cards="{% url 'cardviews' board.id list.id %}">
+      <!-- data-cards="{% url 'cardviews' board.id list.id %}" -->
+          <div class="list-section" >
               <!--<a class="a" href="{% url 'addcard' pk=board.id list_id=list.pk %}">Add Card</a>-->
               <button type="button" 
                       class="btn btn-primary" 

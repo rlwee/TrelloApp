@@ -161,8 +161,11 @@ body{
 
 }
 
-li{
+#draggable{
 
     list-style-type: none;
+    padding-right: 20px;
+    border:1px solid #000;
+    margin-bottom: 1px;
 
 }

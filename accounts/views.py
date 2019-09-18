@@ -53,9 +53,16 @@ class LogIn(TemplateView):
 
 class LogOut(TemplateView):
 
-    template_name = 'accounts.login.html'
+    template_name = 'accounts/login.html'
 
     def get(self,request,**kwargs):
         logout(request)
         messages.info(request,"Logged out")
         return redirect('login')
+
+class MembersViewList(TemplateView):
+
+    template_name = 'accounts/members.html'
+    
+    def get(self, request, **kwargs):
+        return render(request, self.template_name,{})
