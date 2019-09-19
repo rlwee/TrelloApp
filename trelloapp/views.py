@@ -346,15 +346,15 @@ class ListCreate(View):
             lists.save()
             return JsonResponse({'title':lists.title})
         return JsonResponse({}, status=400)
+from django.core import serializers
 
 class DragCard(View):
 
     def post(self, request, **kwargs):
-        board_id = kwargs.get('pk')
-        list_id = kwargs.get('list_id')
-        lists = get_object_or_404(TrelloList, pk=list_id)
-        card = Card.objects.filter(trello_list=lists)
-        return JsonResponse({'title':card.title, 'id':card.id,'list_id':lists.id, 'board_id':board_id})
+        card = get_object_or_404(Card, id=kwargs.get('card_id'), trello_list__id= kwargs.get('list_id'))
+        card.trello_list = get_object_or_404(TrelloList, id=request.POST.get('list_id'))
+        card.save()
+        return JsonResponse({'card_id': card.id, 'list_id': card.trello_list.id}, safe=False)
 
 class CardView(TemplateView):
 

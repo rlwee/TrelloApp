@@ -7,10 +7,12 @@
 
 
             {% for card in cards %} 
-                <li id="draggable" class="draggable ui-state-highlight" data-url="{% url 'card_drag' board_id list_id card.id %}" >
+                <li id="draggable" id="card-{{card.id}}" class="draggable ui-state-highlight" data-url="{% url 'card_drag' board_id list_id card.id %}" data-id="{{card.id}}">
                     <button type="button"
                     
                         id = "carddetail-{{card.id}}"
+                        data-id = "{{card.id}}"
+                        data-title="{{card.title}}"
                         class="btn btn-primary-card" 
                         data-remote="{% url 'card_views' board_id list_id card.id %}" 
                         data-toggle="modal" 

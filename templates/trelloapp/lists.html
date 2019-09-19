@@ -4,7 +4,7 @@
 
       {% for list in lists %}
       <!-- data-cards="{% url 'cardviews' board.id list.id %}" -->
-          <div class="list-section" >
+          <div class="list-section" data-id= "{{list.id}}"  >{{list.id}}
               <!--<a class="a" href="{% url 'addcard' pk=board.id list_id=list.pk %}">Add Card</a>-->
               <button type="button" 
                       class="btn btn-primary" 

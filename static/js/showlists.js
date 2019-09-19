@@ -256,22 +256,35 @@ $(document).ready(function(){
 
     function dragCard(){
         $('.draggable').draggable();
-        var cardUrl = $('#draggable').data('url');
+        
         var csrf = $('input[name="csrfmiddlewaretoken"]').val();
-        var newCard = $('.btn-primary-card')
+        //console.log(cardUrl, 'test URL');
 
         $('.list-section').droppable({
             drop:function(event, ui){
-                alert('dropped');
+               var sectionID = $(this).data('id');
+               console.log(sectionID, 'test section');
+               console.log(event, 'test event');
+
+               var cardID = $(event.toElement).data('id') ;
+               var cardUrl = $(event.toElement).data('url');
+               console.log(cardID,cardUrl, 'test ID,url');
                 $.ajax({
                     method:'POST',
                     url:cardUrl,
-                    data:{'title':newCard,'csrfmiddlewaretoken':csrf}
-                })
-                
+                    data:{'card_id':cardID,'list_id':sectionID,'csrfmiddlewaretoken':csrf}
+                }).done(function(response){
+                    var cardcontainer = response.list_id;
+                    var cardget = $(`#list-${cardcontainer}`);
+
+                    var cardid = response.card_id;
+                    var card = $(`#cardl-${cardid}`)
+
+                    $(this).find(cardget).html(card);
+                    console.log(response, 'response test');
+                });
             }
         });
-
     }
 
 
