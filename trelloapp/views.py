@@ -1,14 +1,14 @@
 import json
-
-
 from django.shortcuts import render,redirect,get_object_or_404
 from django.views.generic.base import TemplateView, View
 from django.contrib.auth.models import User
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-
 from trelloapp.models import Board,TrelloList,Card
-from .forms import PostForm,TrelloListForm,TrelloCardForm
+from .forms import PostForm,TrelloListForm,TrelloCardForm,MemberInviteForm
+from django.core.mail import send_mail
+from django.conf import settings
+from django.template import loader
 
 # Create your views here.
 
@@ -82,6 +82,27 @@ class BoardView(TemplateView):
             tlist.save()
             return redirect('board', board_id=board.id)
         return render(request, self.template_name, {'form':form,'board':board})
+
+
+
+
+class ListCreate(View):
+
+    form = TrelloListForm
+
+    def post(self, request, **kwargs):
+        board_id = kwargs.get('pk')
+        board = get_object_or_404(Board, pk=board_id)
+        form = self.form(request.POST)
+
+        if form.is_valid():
+            lists = form.save(commit=False)
+            lists.board = board
+            lists.save()
+            return JsonResponse({'title':lists.title})
+        return JsonResponse({}, status=400)
+
+
 
 class BoardViewTrelloBase(TemplateView):
 
@@ -331,21 +352,8 @@ class BoardCreate(View):
         return JsonResponse({}, status=400)
 
 
-class ListCreate(View):
 
-    form = TrelloListForm
 
-    def post(self, request, **kwargs):
-        board_id = kwargs.get('pk')
-        board = get_object_or_404(Board, pk=board_id)
-        form = self.form(request.POST)
-
-        if form.is_valid():
-            lists = form.save(commit=False)
-            lists.board = board
-            lists.save()
-            return JsonResponse({'title':lists.title})
-        return JsonResponse({}, status=400)
 from django.core import serializers
 
 class DragCard(View):
@@ -396,4 +404,47 @@ class CardLabelUpdate(View):
         bcard.labels = request.POST.get('labels')
         bcard.save()
         return JsonResponse({'labels':bcard.labels})
+
+class InviteMember(TemplateView):
+
+    template_name = 'trelloapp/invite.html'
+    form = MemberInviteForm
+
+    def get(self, request, **kwargs):
+        board_id = kwargs.get('board_id')
+        board = get_object_or_404(Board, pk=board_id)
+        form = self.form()
+        form.fields['board'].initial=board
+        return render(request, self.template_name, {'form':form,'board':board})
+
+class Email(View):
+
+    form = MemberInviteForm
+
+    def post(self,request,**kwargs):
+        form = self.form(request.POST)
+
+        domain = request.META['HTTP_HOST']
+        if form.is_valid():
+            receiver = request.POST.get('email')
+            subject = 'Hi hello hey ! You have a Trello board invitation'
+            message = 'You have received and invitation to a board!'
+            email_from = settings.EMAIL_HOST_USER
+            recipient_list = [receiver,]
+            html_message = loader.render_to_string(
+                            'trelloapp/invitation.html',
+                            {'domain':domain}
+            )
+            send_mail(subject, message, email_from, recipient_list,fail_silently=True, html_message=html_message)
+            return JsonResponse({'receiver':receiver}) 
+        return JsonResponse({}, status=400)
+
+class Invitation(TemplateView):
+
+    template_name = 'trelloapp/invitation.html'
+
+    def get(self, request, **kwargs):
+        
+        return render(request, self.template_name, {})
+    
 

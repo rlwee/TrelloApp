@@ -1,7 +1,10 @@
 $(document).ready(function(){
+    
     boardButton();
     createBoard();
+    
     listCreate();
+    
     
     
     
@@ -67,7 +70,8 @@ $(document).ready(function(){
         }).done(function(response){
             element.html(response);
             //var cardsElement = $('.card-section');
-            
+ 
+
             dragCard();
             editCard();
             addButton();
@@ -201,6 +205,7 @@ $(document).ready(function(){
                 modal.find('.modal-body').html(response);
 
                 boardSubmit();
+                
             });
         });
     }
@@ -220,12 +225,15 @@ $(document).ready(function(){
                 window.location.href = "/board/detail/" + response.board_id
                 console.log(response, 'test')
                 $('.close').trigger('click');
+
+                inviteMemberButton();
+
             }).fail(function(response){
                 //alert('invalid input');
                 var errorMessage = '<p>This field is required</p>';
 
                 $('.error-board-create').html(errorMessage);
-
+                
 
             });
         })
@@ -255,18 +263,22 @@ $(document).ready(function(){
     }
 
     function dragCard(){
-        $('.draggable').draggable();
-        
+        $('.draggable').draggable(/* {
+
+            connectToSortable: ".list-section",
+        } */);
         var csrf = $('input[name="csrfmiddlewaretoken"]').val();
         //console.log(cardUrl, 'test URL');
 
         $('.list-section').droppable({
+            
             drop:function(event, ui){
+                
                var sectionID = $(this).data('id');
                console.log(sectionID, 'test section');
                console.log(event, 'test event');
 
-               var cardID = $(event.toElement).data('id') ;
+               var cardID = $(event.toElement).data('id');
                var cardUrl = $(event.toElement).data('url');
                console.log(cardID,cardUrl, 'test ID,url');
                 $.ajax({
@@ -278,8 +290,7 @@ $(document).ready(function(){
                     var cardget = $(`#list-${cardcontainer}`);
 
                     var cardid = response.card_id;
-                    var card = $(`#cardl-${cardid}`)
-
+                    var card = $(`#cardl-${cardid}`);
                     $(this).find(cardget).html(card);
                     console.log(response, 'response test');
                 });
@@ -306,9 +317,11 @@ $(document).ready(function(){
 
     });
 
-
+  
         
         $(document).on('blur','.card-detail-title', function(){
+            event.preventDefault();
+            console.log(document, 'document test');
             var url = $(this).data('update');
             var oldValue = $(this).data('title');
             var newTitle = $(this).text();
@@ -332,11 +345,11 @@ $(document).ready(function(){
                 });
             }
         });
-
-
-
-
     
+
+
+
+
         $(document).on('blur','.card-detail-label', function(){
             var url = $(this).data('update');
             var oldValue = $(this).data('label');
@@ -357,11 +370,45 @@ $(document).ready(function(){
             }
 
         });
+    
+    function inviteMemberButton(){
+        $('#board-modal').on('shown.bs.modal',function(event){
+            var remoteUrl = $(event.relatedTarget).data('remote');
+            var modal = $(this);
+            $.ajax({
+
+                method:'GET',
+                url: remoteUrl
+            }).done(function(response){
+                modal.find('.modal-body').html(response);
+                //inviteMemberSubmit();
+            });
+
+        })
+    }
+
+   
+        $(document).on('submit','#invite-form',function(event){
+            event.preventDefault();
+            var inviteFormAction = $(this).attr('action');
+            var inviteData = $(this).serialize();
+            $.ajax({
+                method: 'POST',
+                url: inviteFormAction,
+                data: inviteData
+            }).done(function(response){
+                $('.close').trigger('click');
+                alert("Email invitation sent!");
+                console.log(response,'invitetest')
+            }).fail(function(response){
+                var errorMessage = '<p>This field is required</p>';
+                $('.invite-success').html(errorMessage);
+            });
+
+        })
+
 
     
-        
-
-        
     
         
 

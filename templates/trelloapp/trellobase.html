@@ -25,11 +25,21 @@
                         <a class="nav-link" href="{% url 'listofboards' %}">Boards</a>
                 </li>
 
-                <li class="nav-item">
-                        <a class="nav-link" href="{% url 'invite' %}">Invite</a>
-                </li>
+                {% block invite %}{% endblock %}
+
+<!--                 <button type="button" 
+                        id="popover"
+                        class="btn btn-secondary" 
+                        data-container="body" 
+                        data-toggle="popover" 
+                        data-placement="bottom" 
+                        data-content=''>
 
 
+                        Invite member
+                </button>
+
+ -->
                 <li class="nav-item" id="logout">
                         <a class="nav-link" href="{% url 'logout' %}">Log out Trello</a>
                 </li>
@@ -48,7 +58,7 @@
         <script src="{% static 'lib/jquery-2.2.4.min.js' %}"></script>
         <script src="{% static 'lib/jquery-ui.js' %}"></script>
 
-        
+        <script src="{% static 'lib/popper.min.js' %}"></script>
         <script src="{% static 'lib/bootstrap.min.js' %}"></script>
         <script src="{% static 'js/showlists.js' %}"></script>
         

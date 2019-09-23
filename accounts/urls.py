@@ -4,6 +4,9 @@ from accounts.views import (SignUp,
                             LogIn,
                             LogOut,
                             MembersViewList,
+                            UserDetail,
+                            AddUser,
+                            InviteMember
                            )
 
 urlpatterns = [
@@ -11,7 +14,11 @@ urlpatterns = [
     path('signup/', SignUp.as_view(), name='signup'),
     path('login/', LogIn.as_view(), name='login'),
     path('logout/', LogOut.as_view(), name='logout'),
-    path('members/', MembersViewList.as_view(), name='invite'),
+    path('board/<int:board_id>/', MembersViewList.as_view(), name='invite'),
+    path('user/<int:user_id>/', UserDetail.as_view(), name='userdetail'),
+    path('user/<int:user_id>/added/',InviteMember.as_view(), name='memberadd'),
+    
+
 
     path('', include('django.contrib.auth.urls')),
-]
+] 

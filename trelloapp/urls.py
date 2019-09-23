@@ -1,4 +1,5 @@
 from django.urls import path,include
+#from . import views
 from trelloapp.views import (Dash,
                              BoardCreateView,
                              BoardView,
@@ -24,6 +25,10 @@ from trelloapp.views import (Dash,
                              CardTitleUpdate,
                              CardLabelUpdate,
                              DragCard,
+                             InviteMember,
+                             Email,
+                             Invitation,
+                             
                             )
 
 urlpatterns = [
@@ -48,11 +53,15 @@ urlpatterns = [
     path('board/edit/<int:board_id>/edited/',BoardEdit.as_view(), name='edit_board'),
     path('board/created/', BoardCreate.as_view(), name='boardcreate'),
     path('boards/lists/',BoardViewTrelloBase.as_view(), name='boardslist'),
-    path('board/<int:pk>/lists/View/',ListCreate.as_view(), name='list_views'),
+    path('board/<int:pk>/lists/View/',ListCreate.as_view(), name='list_views'), 
     path('board/<int:board_id>/list/<int:list_id>/card/<int:card_id>/',CardView.as_view(), name='card_views'),
     path('board/<int:board_id>/list/<int:list_id>/card/<int:card_id>/update/title/',CardTitleUpdate.as_view(), name='update_card'),
     path('board/<int:board_id>/list/<int:list_id>/card/<int:card_id>/update/label/',CardLabelUpdate.as_view(), name='update_label'),
     path('board/<int:board_id>/list/<int:list_id>/card/<int:card_id>/dragged/card/',DragCard.as_view(), name='card_drag'),
-
+    path('board/<int:board_id>/invite/',InviteMember.as_view(),name='invitememberform'),
+    #path('invitation/sent/',views.email, name = 'sent')
+    path('board/<int:board_id>/invitation/',Email.as_view(), name = 'sent'),
+    path('message/',Invitation.as_view(), name='invitation'),
+    path('boards/list/',ListOfBoards.as_view(), name='invited'),
     
 ]

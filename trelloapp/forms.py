@@ -1,5 +1,5 @@
 from django import forms
-from .models import Board,TrelloList,Card
+from .models import Board,TrelloList,Card,BoardInvite
 
 
 class PostForm(forms.ModelForm):
@@ -20,3 +20,11 @@ class TrelloCardForm(forms.ModelForm):
         model = Card
         fields = ('title','labels',)
 
+
+class MemberInviteForm(forms.ModelForm):
+
+    email = forms.CharField(label='email',widget=forms.EmailInput(attrs={'placeholder':'Enter email'})) 
+
+    class Meta:
+        model = BoardInvite
+        fields = ('email','board',)

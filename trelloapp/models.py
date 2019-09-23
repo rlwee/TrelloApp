@@ -1,7 +1,8 @@
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
-
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
 
 # Create your models here.
 
@@ -32,3 +33,19 @@ class Card(models.Model):
 
     def __str__(self):
         return self.title
+
+class BoardMembers(models.Model):
+    board = models.ForeignKey('Board', on_delete=models.CASCADE)
+    member = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.BooleanField(default=False)
+
+class BoardInvite(models.Model):
+    board = models.ForeignKey('Board', on_delete=models.CASCADE)
+    email = models.EmailField(max_length= 50)
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.email
+    
+    
+    

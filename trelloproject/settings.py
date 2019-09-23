@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     
+    
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -50,7 +51,9 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'hellotrelloclone@gmail.com'
 EMAIL_HOST_PASSWORD = 'kajlyglpkgpptmtw'
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'hellotrelloclone@gmail.com'
+#DEFAULT_FROM_EMAIL = 'hellotrelloclone@gmail.com'
+
+
 
 
 MIDDLEWARE = [

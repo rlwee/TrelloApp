@@ -1,9 +1,15 @@
+from .forms import UserCreationForm,SignUpForm
+from trelloapp.models import BoardMembers
+from django.contrib import messages
+from django.contrib.auth import login,logout,authenticate, get_user_model
+from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
+from django.contrib.auth.models import User, Permission
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render,redirect
 from django.views.generic.base import TemplateView
-from django.contrib.auth import login,logout,authenticate
-from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
-from .forms import UserCreationForm,SignUpForm
-from django.contrib import messages
+from django.shortcuts import render,redirect,get_object_or_404
+
+
 
 
 # Create your views here.
@@ -65,4 +71,29 @@ class MembersViewList(TemplateView):
     template_name = 'accounts/members.html'
     
     def get(self, request, **kwargs):
-        return render(request, self.template_name,{})
+        users = User.objects.all()
+        return render(request, self.template_name,{'users':users})
+
+class UserDetail(TemplateView):
+
+    template_name = 'accounts/userdetail.html'
+
+    def get(self, request, **kwargs):
+        user_id = kwargs.get('user_id')
+        users = User.objects.get(id=user_id)
+
+        return render(request, self.template_name, {'users':users})
+
+
+class AddUser(TemplateView):
+
+    def get(self,request, **kwargs):
+        user_id = kwargs.get('user_id')
+        user = User.objects.get(id=user_id)
+        user.has_perm()
+        
+
+class InviteMember(TemplateView):
+
+    def dispatch(self,request, *args, **kwargs):
+        pass

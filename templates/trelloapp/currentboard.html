@@ -23,7 +23,15 @@ data-target="#board-modal"
 
 {% endblock %}
 
-
+{% block invite %}
+<button type="button"
+id = "invite-member"
+class="btn btn-primary-board" 
+data-remote="{% url 'invitememberform' board_id=board.pk %}" 
+data-toggle="modal" 
+data-target="#board-modal"
+>Invite member</button>
+{% endblock %}
 
 {% block content %}
 
