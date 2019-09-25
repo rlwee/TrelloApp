@@ -189,3 +189,9 @@ body{
     border: none;
     background-color: transparent;
 }
+
+.board-hide{
+
+    visibility: hidden;
+
+}

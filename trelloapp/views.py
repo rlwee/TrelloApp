@@ -1,14 +1,17 @@
 import json
 from django.shortcuts import render,redirect,get_object_or_404
-from django.views.generic.base import TemplateView, View
-from django.contrib.auth.models import User
 from django.http import HttpResponse, JsonResponse
+from django.views.generic.base import TemplateView, View
 from django.views.decorators.csrf import csrf_exempt
-from trelloapp.models import Board,TrelloList,Card
+from trelloapp.models import Board,TrelloList,Card,BoardMembers,BoardInvite
 from .forms import PostForm,TrelloListForm,TrelloCardForm,MemberInviteForm
 from django.core.mail import send_mail
 from django.conf import settings
 from django.template import loader
+from django.contrib import messages
+from django.contrib.auth import login,logout,authenticate
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
 
 # Create your views here.
 
@@ -63,6 +66,7 @@ class BoardView(TemplateView):
         id = kwargs.get('board_id')
         board = get_object_or_404(Board, pk=id)
         boardlist = TrelloList.objects.filter(board=board)
+        
         form = self.form()
         context = {
             'board':board,
@@ -70,6 +74,7 @@ class BoardView(TemplateView):
             'form':form
         }
         return render(request, self.template_name, context)
+
     
     def post(self,request,**kwargs):
       
@@ -131,8 +136,9 @@ class ListOfBoards(TemplateView):
 
     def get(self,request,**kwargs):
         boards = Board.objects.filter(owner=request.user)
-        #owner = Board.objects.all()
-        return render(request, self.template_name,{'boards':boards})
+        #import pdb; pdb.set_trace()
+        invitedBoards = BoardInvite.objects.filter(email=request.user.email)
+        return render(request, self.template_name,{'boards':boards,'board':invitedBoards})
 
 
 class BoardDetailView(TemplateView):
@@ -415,36 +421,68 @@ class InviteMember(TemplateView):
         board = get_object_or_404(Board, pk=board_id)
         form = self.form()
         form.fields['board'].initial=board
-        return render(request, self.template_name, {'form':form,'board':board})
+        return render(request, self.template_name, {'form':form,'board':board,})
 
 class Email(View):
 
     form = MemberInviteForm
 
     def post(self,request,**kwargs):
+        board_id = kwargs.get('board_id')
+        board = get_object_or_404(Board, pk=board_id)
         form = self.form(request.POST)
 
         domain = request.META['HTTP_HOST']
+
         if form.is_valid():
+            invite = form.save(commit=False)
+            invite.board = board
+            invite.save()
             receiver = request.POST.get('email')
             subject = 'Hi hello hey ! You have a Trello board invitation'
             message = 'You have received and invitation to a board!'
             email_from = settings.EMAIL_HOST_USER
             recipient_list = [receiver,]
+            
             html_message = loader.render_to_string(
                             'trelloapp/invitation.html',
-                            {'domain':domain}
+                            {
+                             'uid':invite.member,
+                             'domain':domain,
+                             'board_id':board.id}
             )
             send_mail(subject, message, email_from, recipient_list,fail_silently=True, html_message=html_message)
             return JsonResponse({'receiver':receiver}) 
         return JsonResponse({}, status=400)
 
-class Invitation(TemplateView):
 
-    template_name = 'trelloapp/invitation.html'
+class LoginInvite(TemplateView):
 
-    def get(self, request, **kwargs):
+    template_name = 'accounts/logininvitaion.html'
+
+    def get(self,request,**kwargs):
+        form = AuthenticationForm()
+
+        invite = get_object_or_404(BoardInvite, member=kwargs.get('uid'))
+        user_email = User.objects.get(email=invite.email) 
+        newMember = BoardMembers.objects.create(board=invite.board,member=user_email) 
         
-        return render(request, self.template_name, {})
-    
+        return render(request, self.template_name, {'form':form})
+
+    def post(self,request,**kwargs):
+        
+        form = AuthenticationForm(request=request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request,user)
+                messages.info(request, f"you are logged in as{username}")
+                return redirect('dashboard')
+            else:
+                messages.error(request, f"Invalid username or password")
+        return render(request, self.template_name, {'form':form})
+        
+        
 

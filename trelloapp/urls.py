@@ -27,8 +27,7 @@ from trelloapp.views import (Dash,
                              DragCard,
                              InviteMember,
                              Email,
-                             Invitation,
-                             
+                             LoginInvite,
                             )
 
 urlpatterns = [
@@ -61,7 +60,7 @@ urlpatterns = [
     path('board/<int:board_id>/invite/',InviteMember.as_view(),name='invitememberform'),
     #path('invitation/sent/',views.email, name = 'sent')
     path('board/<int:board_id>/invitation/',Email.as_view(), name = 'sent'),
-    path('message/',Invitation.as_view(), name='invitation'),
     path('boards/list/',ListOfBoards.as_view(), name='invited'),
+    path('board/invitation/(?P<uid>[0-9A-Za-z_\-]+)/login/',LoginInvite.as_view(),name='logininvitation'),
     
 ]
