@@ -1,9 +1,10 @@
-  {% csrf_token %}
+{% load static %}
+{% csrf_token %}
   <ul class="list-view">
 
       {% for list in lists %}
       <!-- data-cards="{% url 'cardviews' board.id list.id %}" -->
-          <div class="list-section" data-id= "{{list.id}}" >
+          <div class="list-section" data-id= "{{list.id}}" data-title="{{list.title}}" >
               <!--<a class="a" href="{% url 'addcard' pk=board.id list_id=list.pk %}">Add Card</a>-->
               <button type="button" 
                       class="btn btn-primary" 
@@ -21,6 +22,19 @@
                   data-update="{% url 'list_update' board.id list.id %}">{{list.title}}
               </li>
 
+              <button type="button"
+                      id = "list-view-settin" 
+                      data-title="{{list.title}}"
+                      class="btn btn-primary" 
+                      data-remote="{% url 'list_view_setting' board_id=board.id list_id=list.id %}" 
+                      data-toggle="modal" 
+                      data-target="#card-modal">
+                      
+                       <img src="{% static 'images/3dots.png'  %}" width="25"> 
+              
+                </button>
+              
+
               <div data-id="{{ list.id }}" 
                   class="card-container" 
                   id="list-{{list.id}}"
@@ -29,6 +43,9 @@
                       <!-- card data goes here -->
                       
               </div>
+
+              
+
           </div>
          
       {% empty %}

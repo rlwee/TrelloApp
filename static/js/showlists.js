@@ -20,7 +20,7 @@ $(document).ready(function(){
         
 
         var $cardContainer = $('.card-container');
-
+        
         $($cardContainer).each(function(index){
             var cardURL = $(this).data('url');
             
@@ -117,14 +117,12 @@ $(document).ready(function(){
             }).done(function(response){
                     modal.find('.modal-body').html(response);
                     //console.log(response, 'bla')
-                    createCard();
                 }); 
 
         });
     }
 
-    function createCard(){
-        $('.card-form').on('submit',function(event){
+        $(document).on('submit','.card-form',function(event){
             event.preventDefault();
             var cardFormAction = $(this).attr('action');
             console.log(cardFormAction, 'action');
@@ -153,7 +151,7 @@ $(document).ready(function(){
 
             });
         });
-    }
+    
 
 
 
@@ -187,7 +185,7 @@ $(document).ready(function(){
                 $('#boardbutton').text(`${response.title}`);
                 $('.close').trigger('click');
             }).fail(function(response){
-                var errorMessage = '<p>Board title is required</p>';
+                var errorMessage = '<p>Board must have a title!</p>';
                 $('.error').html(errorMessage);
             });
 
@@ -204,14 +202,12 @@ $(document).ready(function(){
             }).done(function(response){
                 modal.find('.modal-body').html(response);
 
-                boardSubmit();
                 
             });
         });
     }
 
-    function boardSubmit(){
-        $('#board-form').on('submit',function(event){
+        $(document).on('submit','#board-form',function(event){
             event.preventDefault();
             var boardFormAction = $(this).attr('action');
             var boardData = $(this).serialize();
@@ -237,7 +233,7 @@ $(document).ready(function(){
 
             });
         })
-    }
+    
 
 
 
@@ -254,7 +250,7 @@ $(document).ready(function(){
                 data:listdata
             }).done(function(response){
                 
-
+                
             }).fail(function(response){
                 var errorMessage = '<p>This field is required!</p>';
                 $('.error-list-create').html(errorMessage);
@@ -303,6 +299,7 @@ $(document).ready(function(){
         event.preventDefault();
         var remoteUrl = $(event.relatedTarget).data('remote');
         var modal = $(this);
+        var cardTitle = $(event.relatedTarget).data('title');
         $.ajax({
             
             url:remoteUrl,
@@ -311,6 +308,7 @@ $(document).ready(function(){
         }).done(function(response){
             event.preventDefault();
             modal.find('.modal-body').html(response);
+            modal.find('.modal-title').html(cardTitle);
             
         });
 
@@ -370,6 +368,8 @@ $(document).ready(function(){
             }
 
         });
+
+
     
     function inviteMemberButton(){
         $('#board-modal').on('shown.bs.modal',function(event){
@@ -409,7 +409,66 @@ $(document).ready(function(){
 
 
     
+        $(document).on('shown.bs.modal','#card-modal',function(event){
+            var remoteUrl = $(event.relatedTarget).data('remote');
+            var listTitle = $(event.relatedTarget).data('title');
+            var modal = $(this);
+
+            $.ajax({
+                method:'GET',
+                url: remoteUrl
+            }).done(function(response){
+                
+                modal.find('.modal-body').html(response);
+                modal.find('.modal-title').html(listTitle);
+            })
+        });
+
+        $(document).on('click','.archive-this-list',function(event){
+            var url = $(this).data('url');
+            var archiveID = $(this).data('id')
+            var listSectionID = $(event.toElement).data('id')
+            
+
+            $.ajax({
+                method:'GET',
+                url:url
+            }).done(function(response){
+                
+                $('.close').trigger('click');
+
+            })
+        });
     
+
         
+        $(document).on('shown.bs.modal','#board-modal',function(event){
+            var remoteUrl = $(event.relatedTarget).data('remote');
+            var modal = $(this);
+            var boardTitle = $(event.relatedTarget).data('title');
+
+            $.ajax({
+                method:'GET',
+                url: remoteUrl
+            }).done(function(response){
+                console.log(response, 'responsedesdasd')
+                modal.find('.modal-body').html(response);
+                modal.find('.modal-title').html(boardTitle);
+            })
+        })
+
+        
+        $(document).on('shown.bs.modal','#boards-view-modal', function(event){
+            var remoteUrl = $(event.relatedTarget).data('remote');
+            var modal = $(this);
+
+            $.ajax({
+                method:'GET',
+                url:remoteUrl
+            }).done(function(response){
+                modal.find('.modal-body').html(response);
+            })
+
+        })
 
 });

@@ -1,18 +1,3 @@
-{% extends 'trelloapp/trellobase.html' %}
-
-{% block title %}Trello-Dashboard{% endblock %}
-
-{% block boardCreate %}
-
-<button type="button"
-id = "boardcreate"
-class="btn btn-primary-board" 
-data-remote="{% url 'createboard' %}" 
-data-toggle="modal" 
-data-target="#board-modal"
->Create Board</button>
-
-{% endblock %}
 
 {% block content %}
     <div class="detail">
@@ -33,9 +18,8 @@ data-target="#board-modal"
                 <li><a class="invitedboardlist"
                 href="{% url 'board' board_id=invited.board.id %}">{{invited.board}}</a></li>
               {% endifchanged %}
-
               {% empty %}
-              <p class="noboard">No boards yet, create boards </p>
+              <p class="noboard">No invited boards</p>
           {% endfor %} 
       </ul>
 

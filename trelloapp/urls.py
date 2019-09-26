@@ -1,4 +1,5 @@
 from django.urls import path,include
+
 #from . import views
 from trelloapp.views import (Dash,
                              BoardCreateView,
@@ -28,6 +29,10 @@ from trelloapp.views import (Dash,
                              InviteMember,
                              Email,
                              LoginInvite,
+                             ArchiveList,
+                             ListSetting,
+                             ArchiveBoard,
+                             ArchiveCard,
                             )
 
 urlpatterns = [
@@ -61,6 +66,10 @@ urlpatterns = [
     #path('invitation/sent/',views.email, name = 'sent')
     path('board/<int:board_id>/invitation/',Email.as_view(), name = 'sent'),
     path('boards/list/',ListOfBoards.as_view(), name='invited'),
-    path('board/invitation/(?P<uid>[0-9A-Za-z_\-]+)/login/',LoginInvite.as_view(),name='logininvitation'),
-    
+    path('board/invitation/(?P<uid>[0-9A-Za-z_\-]+)/login/', LoginInvite.as_view(),name='logininvitation'),
+    path('archived/board/<int:board_id>/lists/<int:list_id>/', ArchiveList.as_view(), name='archive_list'),
+    path('Setting/board/<int:board_id>/list/<int:list_id>/', ListSetting.as_view(), name='list_view_setting'),
+    path('archive/board/<int:board_id>', ArchiveBoard.as_view(), name='archive_board'),
+    path('archive/board/<int:board_id>/list/<int:list_id>/card/<int:card_id>/',ArchiveCard.as_view(), name='archive_card' ),
+
 ]

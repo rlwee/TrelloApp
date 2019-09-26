@@ -135,10 +135,13 @@ class ListOfBoards(TemplateView):
     template_name = 'trelloapp/boards.html'
 
     def get(self,request,**kwargs):
-        boards = Board.objects.filter(owner=request.user)
+        boards = Board.objects.filter(owner=request.user, archive=False)
         #import pdb; pdb.set_trace()
         invitedBoards = BoardInvite.objects.filter(email=request.user.email)
+
         return render(request, self.template_name,{'boards':boards,'board':invitedBoards})
+
+
 
 
 class BoardDetailView(TemplateView):
@@ -231,8 +234,58 @@ class ListView(TemplateView):
     def get(self,request,**kwargs):
         id = kwargs.get('pk')
         board = get_object_or_404(Board, pk=id)
-        lists = TrelloList.objects.filter(board=board)
+        lists = TrelloList.objects.filter(board=board,archive=False)
         return render(request, self.template_name, {'board': board, 'lists':lists})
+
+
+class ArchiveBoard(TemplateView):
+
+    def get(self, request, **kwargs):
+        board_id = kwargs.get('board_id')
+        archive_board = get_object_or_404(Board, id=board_id)
+        archive_board.archive = True
+        archive_board .save()
+        return redirect('listofboards')
+
+class ArchiveList(TemplateView):
+
+    template_name = 'trelloapp/archivedlists.html'
+
+    def get(self, request, **kwargs):
+        board_id = kwargs.get('board_id')
+        board = get_object_or_404(Board, id=board_id)
+        list_id = kwargs.get('list_id')
+        archive_list = get_object_or_404(TrelloList, board_id=board_id, id=list_id)
+        archive_list.archive = True
+        archive_list.save()
+        archived = TrelloList.objects.filter(board=board_id, archive=True)
+        return redirect('board', board_id = board_id)
+
+
+class ListSetting(TemplateView):
+
+    template_name = 'trelloapp/listviewsetting.html'
+
+    def get(self, request, **kwargs):
+        board_id = kwargs.get('board_id')
+        list_id = kwargs.get('list_id')
+        board = get_object_or_404(Board, id=board_id)
+        blist = get_object_or_404(TrelloList, board_id=board_id, id=list_id)
+        context = {
+
+                'blist_title':blist.title,
+                'board':board,
+                'list':blist,
+
+        }
+        return render(request, self.template_name, context)
+
+
+
+
+class DeleteList(TemplateView):
+
+    pass
 
 class CardCreateView(TemplateView):
 
@@ -278,7 +331,7 @@ class CardList(TemplateView):
         board_id = kwargs.get('board_id')
         list_id = kwargs.get('list_id')
         board_list = get_object_or_404(TrelloList, pk=list_id)
-        cards = Card.objects.filter(trello_list=board_list)
+        cards = Card.objects.filter(trello_list=board_list, archive=False)
         context = {
             'cards':cards,
             'board_id': board_id,
@@ -484,5 +537,14 @@ class LoginInvite(TemplateView):
                 messages.error(request, f"Invalid username or password")
         return render(request, self.template_name, {'form':form})
         
-        
 
+class ArchiveCard(TemplateView):
+    
+    def get(self, request, **kwargs):
+        board_id = kwargs.get('board_id')
+        list_id = kwargs.get('list_id')
+        card_id = kwargs.get('card_id')
+        archive_card = get_object_or_404(Card, trello_list__id=list_id, id=card_id)
+        archive_card.archive = True
+        archive_card.save()
+        return redirect('board', board_id=board_id)
