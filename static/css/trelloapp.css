@@ -52,6 +52,12 @@ body{
     height: 250px;
     border: 1px solid #ccc;
     display: inline-block;
+
+    border-radius: 3px;
+    box-sizing: border-box;
+
+    flex-direction: column;
+    max-height: 100%;
 }
 
 .edit-delete-list-button{
@@ -71,6 +77,27 @@ body{
     padding: 0px;
 
  
+}
+
+.imgdrag{
+
+    vertical-align: middle;
+    border-style: none;
+    position: absolute;
+    top: 5px;
+    right: 9px;
+    pointer-events: none;
+
+}
+
+.btn.btn-primary-card{
+
+    position: relative;
+    top: -14px;
+    right: 14px;
+    padding-top: 2px;
+    width: 200px;
+    height: 28px;
 }
 
 .btn.btn-primary-board{
@@ -118,6 +145,7 @@ body{
 
 }
 
+
 #dropdown{
 
     padding: 0px;
@@ -156,14 +184,25 @@ body{
 
 }
 
+.mb-5, .my-5 {
+    margin-bottom: 0.1rem!important;
+}
+
 #draggable{
 
     list-style-type: none;
     padding-right: 20px;
     border:1px solid #000;
-    margin-bottom: 1px;
+    margin-bottom: -10px;
+    width: 250px;
+    height: 20px;
+    position: relative;
+    top: 20px;
+    
 
 }
+
+
 
 .user{
 
@@ -242,7 +281,6 @@ li {
 .btn-secondary {
     color: fff;
     font-size: 15px;
-
     padding: 5px;
     padding-top: 0px;
     padding-bottom: 0px;
@@ -252,3 +290,4 @@ li {
     width: 150px;
     border-radius: 15px;
 }
+

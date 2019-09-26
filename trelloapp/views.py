@@ -476,6 +476,7 @@ class InviteMember(TemplateView):
         form.fields['board'].initial=board
         return render(request, self.template_name, {'form':form,'board':board,})
 
+
 class Email(View):
 
     form = MemberInviteForm

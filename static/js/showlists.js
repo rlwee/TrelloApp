@@ -370,6 +370,7 @@ $(document).ready(function(){
         });
 
 
+        
     
     function inviteMemberButton(){
         $('#board-modal').on('shown.bs.modal',function(event){
@@ -421,6 +422,10 @@ $(document).ready(function(){
                 
                 modal.find('.modal-body').html(response);
                 modal.find('.modal-title').html(listTitle);
+            }).fail(function(response){
+                var errorMessage = '<p>Field has no value!</p>';
+                $('.invite-success').html(errorMessage);
+                
             })
         });
 
