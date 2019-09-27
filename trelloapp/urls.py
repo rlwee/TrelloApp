@@ -33,6 +33,8 @@ from trelloapp.views import (Dash,
                              ListSetting,
                              ArchiveBoard,
                              ArchiveCard,
+                             RetrieveBoard,
+                             RetrieveList,
                             )
 
 urlpatterns = [
@@ -71,5 +73,8 @@ urlpatterns = [
     path('Setting/board/<int:board_id>/list/<int:list_id>/', ListSetting.as_view(), name='list_view_setting'),
     path('archive/board/<int:board_id>', ArchiveBoard.as_view(), name='archive_board'),
     path('archive/board/<int:board_id>/list/<int:list_id>/card/<int:card_id>/',ArchiveCard.as_view(), name='archive_card' ),
+    path('retrieve/board/<int:board_id>/', RetrieveBoard.as_view(), name='retrieve_board'),
+    path('archived/board/<int:board_id>/list/<int:list_id>/', RetrieveList.as_view(), name='retrieve_list'),
+    
 
 ]

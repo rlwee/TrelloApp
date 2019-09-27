@@ -152,7 +152,8 @@ class BoardDetailView(TemplateView):
     def get(self,request, **kwargs):
         id = kwargs.get('pk')
         boards = get_object_or_404(Board, pk=id)
-        return render(request,self.template_name,{'boards':boards})
+        archived_boards = Board.objects.filter(owner=request.user, archive=True)
+        return render(request,self.template_name,{'boards':boards,'archived_boards':archived_boards})
 
 class EditBoard(TemplateView):
 
@@ -179,14 +180,15 @@ class EditBoard(TemplateView):
         return render(request, self.template_name, {'form':form,'boards':boards})
 
 
-class DeleteBoard(TemplateView):
+class DeleteBoard(View):
 
     def get(self,request,**kwargs):
         id = kwargs.get('board_id')
         boards = Board.objects.get(pk=id, owner=request.user)
+        boardID = Board.objects.get(pk=id, owner=request.user)
         if request.user.is_authenticated:
             boards.delete()
-            return redirect('listofboards')
+            return JsonResponse({'boards_id':boards.id,'boardID':boardID.id})
 
 class DeleteBoardNew(TemplateView):
     pass
@@ -240,12 +242,28 @@ class ListView(TemplateView):
 
 class ArchiveBoard(TemplateView):
 
+    template_name = 'trelloapp/boardlists.html'
+
     def get(self, request, **kwargs):
+        invitedBoards = BoardInvite.objects.filter(email=request.user.email)
+        boardlist = Board.objects.filter(owner=request.user, archive=False)
         board_id = kwargs.get('board_id')
         archive_board = get_object_or_404(Board, id=board_id)
         archive_board.archive = True
-        archive_board .save()
-        return redirect('listofboards')
+        archive_board.save()
+        return render(request, self.template_name, {'boardlist':boardlist,'board':invitedBoards})
+
+
+class RetrieveBoard(View):
+
+    def get(self, request, **kwargs):
+        board_id = kwargs.get('board_id')
+        retrieve_board = get_object_or_404(Board, id=board_id)
+        retrieve_board.archive = False
+        retrieve_board.save()
+        return JsonResponse({'board_id':retrieve_board.id})
+
+
 
 class ArchiveList(TemplateView):
 
@@ -262,6 +280,17 @@ class ArchiveList(TemplateView):
         return redirect('board', board_id = board_id)
 
 
+class RetrieveList(View):
+
+    def get(self, request, **kwargs):
+        board_id = kwargs.get('board_id')
+        list_id = kwargs.get('list_id')
+        blist = get_object_or_404(TrelloList, board_id=board_id, id=list_id)
+        blist.archive = False
+        blist.save()
+        return JsonResponse({'blist':blist.title})
+
+
 class ListSetting(TemplateView):
 
     template_name = 'trelloapp/listviewsetting.html'
@@ -269,6 +298,7 @@ class ListSetting(TemplateView):
     def get(self, request, **kwargs):
         board_id = kwargs.get('board_id')
         list_id = kwargs.get('list_id')
+        archived_list = TrelloList.objects.filter(board=board_id, archive=True)
         board = get_object_or_404(Board, id=board_id)
         blist = get_object_or_404(TrelloList, board_id=board_id, id=list_id)
         context = {
@@ -276,6 +306,7 @@ class ListSetting(TemplateView):
                 'blist_title':blist.title,
                 'board':board,
                 'list':blist,
+                'archived_list':archived_list,
 
         }
         return render(request, self.template_name, context)

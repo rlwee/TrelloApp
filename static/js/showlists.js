@@ -5,11 +5,14 @@ $(document).ready(function(){
     
     listCreate();
     
-    
-    
+   
     
     const $listContainer = $('.list-container');
     const url = $listContainer.data('url');
+
+
+    
+    
 
     $.ajax({
         url: url,
@@ -166,6 +169,8 @@ $(document).ready(function(){
             }).done(function(response){
                 modal.find('.modal-body').html(response);
                 editBoard();
+
+                
             })
             
         });
@@ -422,6 +427,14 @@ $(document).ready(function(){
                 
                 modal.find('.modal-body').html(response);
                 modal.find('.modal-title').html(listTitle);
+
+                $(function () {
+                    $('[data-toggle="popover"]').popover(
+                        {html:true}
+                    )
+                });
+
+
             }).fail(function(response){
                 var errorMessage = '<p>Field has no value!</p>';
                 $('.invite-success').html(errorMessage);
@@ -459,6 +472,14 @@ $(document).ready(function(){
                 console.log(response, 'responsedesdasd')
                 modal.find('.modal-body').html(response);
                 modal.find('.modal-title').html(boardTitle);
+
+                $(function () {
+                    $('[data-toggle="popover"]').popover(
+                        {html:true}
+                    )
+                });
+
+                  
             })
         })
 
@@ -475,5 +496,49 @@ $(document).ready(function(){
             })
 
         })
+
+
+        $(document).on('click','.delete-board-butt', function(){
+            var archivedBoard = $('.list-of-archived-boards');
+            var url = $(this).data('url');
+
+            $.ajax({
+                method:'GET',
+                url:url
+            }).done(function(response){
+                
+                var boardID = response.boardID
+                var archived = $(`#board-${boardID}`)
+                console.log(archived,"testing board id")
+                var template = '<p>Board deleted</p>'
+                $('.listsofarchvied').find(archived).html(template);   
+            })
+        })
+
+
+        $(document).on('click','.retrieve-board-butt',function(){
+            var retrieveBoard = $('.list-of-archived-boards');
+            var url = $(this).data('url');
+
+            $.ajax({
+                method:'GET',
+                url:url
+            }).done(function(response){
+                console.log(response,'archive response blabla')
+                var boardID = $(`#board-${response.board_id}`)
+                var template = '<p>Board restored</p>'
+                
+                $('.listsofarchvied').find(boardID).html(template)
+            })
+        })
+
+
+        $(document).on('click','.retrieve-board-butt',function(){
+            var url = $(this).data('url');
+
+            
+        })
+
+        
 
 });
