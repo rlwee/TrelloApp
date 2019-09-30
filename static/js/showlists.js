@@ -302,14 +302,14 @@ $(document).ready(function(){
                     $(this).find(cardget).html(card);
                     console.log(response, 'response test');
 
-                    /* var user = response.user
+                    var user = response.user
                     var cardTitle = response.card_title
                     var listTitle = response.list_title
                     var activity_template = `<p class="mb-1">${user} just moved ${cardTitle} to ${listTitle}</p>
                     <small class="text-muted">Donec id elit non mi porta.</small>`
                     console.log(user, 'response user');
                     $('.list-group').find('#logContainer').append(activity_template);
- */
+ 
                 });
             }
         });

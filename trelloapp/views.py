@@ -456,12 +456,13 @@ from django.core import serializers
 class DragCard(View):
 
     def post(self, request, **kwargs):
+        
         user = request.user
-        usr = User.objects.get(username=user)
+        usr = User.objects.get(username=request.user)
         card = get_object_or_404(Card, id=kwargs.get('card_id'), trello_list__id= kwargs.get('list_id'))
         card.trello_list = get_object_or_404(TrelloList, id=request.POST.get('list_id'))
         card.save()
-        return JsonResponse({'user':usr,'list_title': card.trello_list.title, 'card_title': card.title, 'card_id': card.id,'list_id': card.trello_list.id}, safe=False)
+        return JsonResponse({'user':usr.username,'list_title': card.trello_list.title, 'card_title': card.title, 'card_id': card.id,'list_id': card.trello_list.id}, safe=False)
 
 class CardView(TemplateView):
 
