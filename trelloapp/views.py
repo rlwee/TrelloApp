@@ -104,7 +104,7 @@ class ListCreate(View):
             lists = form.save(commit=False)
             lists.board = board
             lists.save()
-            return JsonResponse({'title':lists.title})
+            return JsonResponse({'board_id':board.id,'list_id':lists.id, 'list_title':lists.title})
         return JsonResponse({}, status=400)
 
 
@@ -285,10 +285,11 @@ class RetrieveList(View):
     def get(self, request, **kwargs):
         board_id = kwargs.get('board_id')
         list_id = kwargs.get('list_id')
+        board = get_object_or_404(Board, id=board_id)
         blist = get_object_or_404(TrelloList, board_id=board_id, id=list_id)
         blist.archive = False
         blist.save()
-        return JsonResponse({'blist':blist.title})
+        return JsonResponse({'board_id':board.id, 'blist':blist.title, 'blist_id':blist.id})
 
 
 class ListSetting(TemplateView):
@@ -314,9 +315,17 @@ class ListSetting(TemplateView):
 
 
 
-class DeleteList(TemplateView):
-
-    pass
+class DeleteArchivedList(TemplateView):
+    
+    def get(self, request, **kwargs):
+        board_id = kwargs.get('board_id')
+        list_id = kwargs.get('list_id')
+        board = get_object_or_404(Board, id=board_id)
+        blist = get_object_or_404(TrelloList, id=list_id, board_id=board_id)
+        listID = get_object_or_404(TrelloList, id=list_id, board_id=board_id)
+        if request.user.is_authenticated:
+            blist.delete()
+            return JsonResponse({'blist_id':listID.id,'list_id':blist.id,'board_id':board.id})
 
 class CardCreateView(TemplateView):
 
@@ -442,17 +451,17 @@ class BoardCreate(View):
         return JsonResponse({}, status=400)
 
 
-
-
 from django.core import serializers
 
 class DragCard(View):
 
     def post(self, request, **kwargs):
+        user = request.user
+        usr = User.objects.get(username=user)
         card = get_object_or_404(Card, id=kwargs.get('card_id'), trello_list__id= kwargs.get('list_id'))
         card.trello_list = get_object_or_404(TrelloList, id=request.POST.get('list_id'))
         card.save()
-        return JsonResponse({'card_id': card.id, 'list_id': card.trello_list.id}, safe=False)
+        return JsonResponse({'user':usr,'list_title': card.trello_list.title, 'card_title': card.title, 'card_id': card.id,'list_id': card.trello_list.id}, safe=False)
 
 class CardView(TemplateView):
 
@@ -464,14 +473,43 @@ class CardView(TemplateView):
         blist = TrelloList.objects.get(pk=list_id)
         card_id = kwargs.get('card_id')
         card = Card.objects.get(pk=card_id)
+        archived_card = Card.objects.filter(trello_list_id=list_id, archive=True)
         context = {
             'board_id':board_id,
             'card_id':card_id,
             'card':card,
             'list_id':list_id,
             'blist':blist,
+            'archived_card':archived_card,
         }
         return render(request, self.template_name, context)
+
+
+class RetrieveCard(View):
+
+    def get(self, request, **kwargs):
+        board_id = kwargs.get('board_id')
+        list_id = kwargs.get('list_id')
+        card_id = kwargs.get('card_id')
+        card = get_object_or_404(Card, trello_list_id = list_id, id = card_id)
+        card.archive=False
+        card.save()
+        return JsonResponse({'card_title':card.title,'card_id':card.id,'board_id':board_id})
+
+
+class DeleteCard(View):
+
+    def get(self, request, **kwargs):
+        board_id = kwargs.get('board_id')
+        list_id = kwargs.get('list_id')
+        card_id = kwargs.get('card_id')
+        card = get_object_or_404(Card, trello_list_id = list_id, id = card_id)
+        cardID = get_object_or_404(Card, trello_list_id = list_id, id = card_id)
+        if request.user.is_authenticated:
+            card.delete()
+            return JsonResponse({'cardID':cardID.id})
+
+
 
 class CardTitleUpdate(View):
 
@@ -580,3 +618,17 @@ class ArchiveCard(TemplateView):
         archive_card.archive = True
         archive_card.save()
         return redirect('board', board_id=board_id)
+
+class LeaveBoard(TemplateView):
+
+    def get(self, request, **kwargs):
+        #import pdb; pdb.set_trace()
+        board_id = kwargs.get('board_id')
+        board = get_object_or_404(Board, id=board_id)
+        mem = request.user
+        member = BoardMembers.objects.filter(member=mem)
+        invited = BoardInvite.objects.get(board=board)
+        if request.user.is_authenticated:
+            member.delete()
+            invited.delete()
+            return redirect('dashboard')

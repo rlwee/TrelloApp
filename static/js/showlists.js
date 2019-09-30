@@ -61,11 +61,13 @@ $(document).ready(function(){
 
 
 
-    }).fail(function(response){
-        var errorMessage = '<p>This field is required!</p>';
-        $('.error-list-create').html(errorMessage);
-    });
+    })
     
+
+    
+
+
+
     function loadCards(url, element){
         $.ajax({
             url: url,
@@ -238,6 +240,9 @@ $(document).ready(function(){
 
             });
         })
+
+
+        
     
 
 
@@ -248,13 +253,15 @@ $(document).ready(function(){
 
             var listFormAction = $(this).attr('action');
             var listdata = $(this).serialize();
-
+            console.log(listFormAction, 'listcreatetesting')
             $.ajax({
                 method:'POST',
                 url:listFormAction,
                 data:listdata
             }).done(function(response){
-                
+                event.preventDefault()
+                console.log(response, 'listcreatetesting')
+                window.location.href = "/board/detail/" + response.board_id
                 
             }).fail(function(response){
                 var errorMessage = '<p>This field is required!</p>';
@@ -264,10 +271,10 @@ $(document).ready(function(){
     }
 
     function dragCard(){
-        $('.draggable').draggable(/* {
-
+        $('.draggable').draggable( /* {
+        
             connectToSortable: ".list-section",
-        } */);
+        } */ );
         var csrf = $('input[name="csrfmiddlewaretoken"]').val();
         //console.log(cardUrl, 'test URL');
 
@@ -294,6 +301,15 @@ $(document).ready(function(){
                     var card = $(`#cardl-${cardid}`);
                     $(this).find(cardget).html(card);
                     console.log(response, 'response test');
+
+                    /* var user = response.user
+                    var cardTitle = response.card_title
+                    var listTitle = response.list_title
+                    var activity_template = `<p class="mb-1">${user} just moved ${cardTitle} to ${listTitle}</p>
+                    <small class="text-muted">Donec id elit non mi porta.</small>`
+                    console.log(user, 'response user');
+                    $('.list-group').find('#logContainer').append(activity_template);
+ */
                 });
             }
         });
@@ -315,6 +331,12 @@ $(document).ready(function(){
             modal.find('.modal-body').html(response);
             modal.find('.modal-title').html(cardTitle);
             
+            $(function(){
+                $('[data-toggle="popover"]').popover(
+                    {html:true}
+                )
+            });
+
         });
 
 
@@ -342,8 +364,10 @@ $(document).ready(function(){
                     //edit card title in background
                     var cardID = response.card_id
                     var card = $(`#carddetail-${cardID}`)
-                    console.log(response.title, 'respondcard')
+                    console.log(response.title, 'respondcardqweasdas')
                     $(card).html(`${response.title}`);
+                    
+                    
 
                 });
             }
@@ -369,6 +393,7 @@ $(document).ready(function(){
                 }).done(function(response){
                     
                     
+
                 });
             }
 
@@ -533,11 +558,75 @@ $(document).ready(function(){
         })
 
 
-        $(document).on('click','.retrieve-board-butt',function(){
+
+        $(document).on('click','.retrieve-list-butt',function(){
             var url = $(this).data('url');
 
-            
+            $.ajax({
+                method:'GET',
+                url: url
+            }).done(function(response){
+                var retrieve_template= '<p> List is retrieved! </p>'
+                var archived_list = $(`#list-${response.blist_id}`);
+
+                $('.lists-of-archived-lists').find(archived_list).html(retrieve_template);
+                $('.close').trigger('click');
+                window.location.href = "/board/detail/" + response.board_id
+            })
         })
+
+        $(document).on('click','.delete-list-butt',function(){
+            var url = $(this).data('url');
+            $.ajax({
+                    method:'GET',
+                    url:url
+                }).done(function(response){
+                    console.log(response,'retrieve test')
+                    var listID = response.blist_id
+                    var retrieve_template = '<p>List is deleted!</p>'
+                    var archived_list = $(`#list-${listID}`);
+                    
+                    $('.lists-of-archived-lists').find(archived_list).html(retrieve_template);
+            });        
+
+        })
+
+
+        $(document).on('click','.retrieve-card-butt', function(){
+            var url = $(this).data('url');
+
+            $.ajax({
+                method:'GET',
+                url: url
+            }).done(function(response){
+                var retrieve_template= '<p> Card is retrieved! </p>'
+                var archived_list = $(`#card-${response.card_id}`);
+
+                $('.lists-of-archived-cards').find(archived_list).html(retrieve_template);
+                $('.close').trigger('click');
+                window.location.href = "/board/detail/" + response.board_id
+            })
+        })
+
+
+        $(document).on('click','.delete-card-butt', function(){
+            var url = $(this).data('url');
+
+            $.ajax({
+                method:'GET',
+                url: url
+            }).done(function(response){
+                var retrieve_template= '<p> Card deleted! </p>'
+                var archived_list = $(`#card-${response.card_id}`);
+
+                $('.lists-of-archived-cards').find(archived_list).html(retrieve_template);
+                $('.close').trigger('click');
+                window.location.href = "/board/detail/" + response.board_id
+            })
+        })
+
+
+
 
         
 

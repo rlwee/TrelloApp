@@ -17,12 +17,12 @@
             data-placement="right"
             id = "content" 
             data-content='
-                        <ul class="listsofarchvied">
+                        <ul class="lists-of-archived-lists">
                             {% for list in archived_list %}
-                                <div class="list-of-archived-boards" id="list-{{list.id}}"> 
+                                <div class="list-of-archived-lists" id="list-{{list.id}}"> 
                                     <li>{{list.title}}</li> 
-                                    <a class="retrieve-board-butt" data-url="{% url 'retrieve_list' board_id=board.id list_id=list.id %}" href="#">retrieve </a> 
-                                    <a class="delete-board-butt" data-url="#" href="#"> delete </a>
+                                    <a class="retrieve-list-butt" data-url="{% url 'retrieve_list' board_id=board.id list_id=list.id %}" href="#">retrieve </a> 
+                                    <a class="delete-list-butt" data-url="{% url 'delete_archived_list' board_id=board.id list_id=list.id %}" href="#"> delete </a>
                                 </div>
                             {% endfor %}
                         </ul>

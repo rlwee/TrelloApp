@@ -46,7 +46,7 @@ data-target="#board-modal"
 
 
     <div>
-        <form method="POST"  novalidate>{% csrf_token %}
+        <form method="POST" id="list-form" action="{% url 'list_views' pk=board.id %}" novalidate>{% csrf_token %}
             {% for field in form %}
             <label>Create New List {{ field.label }} {{ field }}</label>
             <p class="error-list-create"></p>
@@ -58,6 +58,46 @@ data-target="#board-modal"
     <div class="list-container" data-url="{% url 'listviews' pk=board.id %}">
       
     </div>
+
+
+
+
+    <div class="list-group">
+      <a href="#" class="list-group-item list-group-item-action active">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">Menu</h5>
+          <small>3 days ago</small>
+        </div>
+        <p class="mb-1">In progress.</p>
+        <small>Donec id elit non mi porta.</small>
+      </a>
+
+
+
+      <a href="#" id="logContainer" class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">Activity </h5>
+          <small class="text-muted">3 days ago</small>
+        </div>
+
+        <p class="mb-1">In progress.</p>
+        <small class="text-muted">Donec id elit non mi porta.</small>
+
+
+      </a>
+
+
+
+      <a href="#" class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">In progress</h5>
+          <small class="text-muted">3 days ago</small>
+        </div>
+        <p class="mb-1">In progress.</p>
+        <small class="text-muted">Donec id elit non mi porta.</small>
+      </a>
+    </div>
+
 
 
 

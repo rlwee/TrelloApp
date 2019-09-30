@@ -351,3 +351,53 @@ li {
         left: -10px;
 
 }
+
+
+.delete-list-butt{
+
+    margin-left: 5px;
+    color: red;
+
+}
+
+.delete-list-butt:hover{
+
+    
+    color: red;
+
+}
+
+.delete-list-butt{
+
+    margin-left: 5px;
+    color: red;
+
+}
+
+.delete-board-list:hover{
+
+    
+    color: red;
+
+}
+
+.leave-board{
+
+    margin-left: 50px;
+
+}
+
+.leave-board{
+
+    color: red;
+
+}
+
+.list-group{
+
+    width: 300px;
+    position: relative;
+    left: 130%;
+    bottom: 525px;
+
+}

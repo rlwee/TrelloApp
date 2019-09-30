@@ -35,6 +35,10 @@ from trelloapp.views import (Dash,
                              ArchiveCard,
                              RetrieveBoard,
                              RetrieveList,
+                             DeleteArchivedList,
+                             RetrieveCard,
+                             DeleteCard,
+                             LeaveBoard,
                             )
 
 urlpatterns = [
@@ -42,7 +46,7 @@ urlpatterns = [
 
     path('boards/lists/',BoardViewTrelloBase.as_view(), name='boardslist'),
     
-    path('sample-ajax/', MyAjaxView.as_view(), name='dashboard'),
+    path('sample-ajax/', MyAjaxView.as_view(), name='dashboards'),
     path('board/create/', BoardCreateView.as_view(), name='createboard'),
     path('board/detail/<int:board_id>/', BoardView.as_view(), name='board'),
     path('boards/',ListOfBoards.as_view(), name='listofboards'),
@@ -59,7 +63,7 @@ urlpatterns = [
     path('board/edit/<int:board_id>/edited/',BoardEdit.as_view(), name='edit_board'),
     path('board/created/', BoardCreate.as_view(), name='boardcreate'),
     path('boards/lists/',BoardViewTrelloBase.as_view(), name='boardslist'),
-    path('board/<int:pk>/lists/View/',ListCreate.as_view(), name='list_views'), 
+    path('board/<int:pk>/list/',ListCreate.as_view(), name='list_views'), 
     path('board/<int:board_id>/list/<int:list_id>/card/<int:card_id>/',CardView.as_view(), name='card_views'),
     path('board/<int:board_id>/list/<int:list_id>/card/<int:card_id>/update/title/',CardTitleUpdate.as_view(), name='update_card'),
     path('board/<int:board_id>/list/<int:list_id>/card/<int:card_id>/update/label/',CardLabelUpdate.as_view(), name='update_label'),
@@ -75,6 +79,9 @@ urlpatterns = [
     path('archive/board/<int:board_id>/list/<int:list_id>/card/<int:card_id>/',ArchiveCard.as_view(), name='archive_card' ),
     path('retrieve/board/<int:board_id>/', RetrieveBoard.as_view(), name='retrieve_board'),
     path('archived/board/<int:board_id>/list/<int:list_id>/', RetrieveList.as_view(), name='retrieve_list'),
-    
+    path('board/<int:board_id>/list/<int:list_id>/deleted/', DeleteArchivedList.as_view(), name='delete_archived_list'),
+    path('Retrieve/board/<int:board_id>/list/<int:list_id>/card/<int:card_id>/', RetrieveCard.as_view(), name='retrieve_card'),
+    path('Delete/board/<int:board_id>/list/<int:list_id>/card/<int:card_id>/', DeleteCard.as_view(), name='delete_card'),
+    path('leave/board/<int:board_id>/', LeaveBoard.as_view(), name='leave_board'),
 
 ]
