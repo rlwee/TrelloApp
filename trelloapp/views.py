@@ -2,8 +2,12 @@ import json
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.views.generic.base import TemplateView, View
+from django.views.generic import FormView
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from trelloapp.models import Board,TrelloList,Card,BoardMembers,BoardInvite
+from trelloapp.permissions import BoardPermissionMixin
 from .forms import PostForm,TrelloListForm,TrelloCardForm,MemberInviteForm
 from django.core.mail import send_mail
 from django.conf import settings
@@ -12,7 +16,9 @@ from django.contrib import messages
 from django.contrib.auth import login,logout,authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-
+from braces.views._access import AccessMixin
+from braces.views import AnonymousRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 # Create your views here.
 
 
@@ -57,12 +63,13 @@ class BoardCreateView(TemplateView):
         return render(request, self.template_name,{'form':form,'board':board})
 
 
-class BoardView(TemplateView):
+class BoardView(BoardPermissionMixin, TemplateView):
 
     template_name = 'trelloapp/currentboard.html'
     form = TrelloListForm
     
     def get(self, request, **kwargs):
+        
         id = kwargs.get('board_id')
         board = get_object_or_404(Board, pk=id)
         boardlist = TrelloList.objects.filter(board=board)
@@ -74,8 +81,9 @@ class BoardView(TemplateView):
             'form':form
         }
         return render(request, self.template_name, context)
+       
 
-    
+
     def post(self,request,**kwargs):
       
         id = kwargs.get('board_id')
@@ -86,6 +94,7 @@ class BoardView(TemplateView):
             tlist.board = board
             tlist.save()
             return redirect('board', board_id=board.id)
+       
         return render(request, self.template_name, {'form':form,'board':board})
 
 
@@ -462,7 +471,11 @@ class DragCard(View):
         card = get_object_or_404(Card, id=kwargs.get('card_id'), trello_list__id= kwargs.get('list_id'))
         card.trello_list = get_object_or_404(TrelloList, id=request.POST.get('list_id'))
         card.save()
-        return JsonResponse({'user':usr.username,'list_title': card.trello_list.title, 'card_title': card.title, 'card_id': card.id,'list_id': card.trello_list.id}, safe=False)
+        return JsonResponse({'user':usr.username,
+                             'list_title': card.trello_list.title, 
+                             'card_title': card.title, 
+                             'card_id': card.id,
+                             'list_id': card.trello_list.id}, safe=False)
 
 class CardView(TemplateView):
 
@@ -589,8 +602,8 @@ class LoginInvite(TemplateView):
 
         invite = get_object_or_404(BoardInvite, member=kwargs.get('uid'))
         user_email = User.objects.get(email=invite.email) 
-        newMember = BoardMembers.objects.create(board=invite.board,member=user_email) 
-        
+        newMember = BoardMembers.objects.create(board=invite.board,member=user_email,owner=True)
+        #user = authenticate(username=username, password=password)
         return render(request, self.template_name, {'form':form})
 
     def post(self,request,**kwargs):
@@ -633,3 +646,4 @@ class LeaveBoard(TemplateView):
             member.delete()
             invited.delete()
             return redirect('dashboard')
+
