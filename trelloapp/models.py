@@ -2,10 +2,30 @@ import uuid
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
-from django.contrib.auth.models import User
 from django.core.mail import send_mail
+from django.contrib.auth.models import User
+from django.contrib.contenttypes.fields import GenericForeignKey,GenericRelation
+from django.contrib.contenttypes.models import ContentType
 
 # Create your models here.
+class Activity(models.Model):
+    DRAGGED = 'dragged'
+    MOVED = 'M'
+    RENAME = 'R'
+    ACTIVITY_TYPES = (
+                        (MOVED, 'MOVED'),
+                        (RENAME, 'RENAME'),
+                        (DRAGGED, 'dragged')
+                     )
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    activity_type = models.CharField(max_length = 20, choices = ACTIVITY_TYPES)
+    date = models.DateTimeField(auto_now_add=True)
+
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
 
 
 class Board(models.Model):
@@ -33,6 +53,8 @@ class Card(models.Model):
     labels = models.CharField(max_length=50)
     trello_list = models.ForeignKey('TrelloList', on_delete=models.CASCADE)
     archive = models.BooleanField(default=False)
+    drag = GenericRelation(Activity)
+
 
     def __str__(self):
         return self.title
@@ -53,5 +75,6 @@ class BoardInvite(models.Model):
         return self.email
     
 
-    
-    
+
+
+

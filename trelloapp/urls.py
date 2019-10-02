@@ -1,4 +1,4 @@
-from django.urls import path,include
+from django.urls import path, include
 
 #from . import views
 from trelloapp.views import (Dash,
@@ -39,6 +39,7 @@ from trelloapp.views import (Dash,
                              RetrieveCard,
                              DeleteCard,
                              LeaveBoard,
+                             InvitedBoard,
                             )
 
 urlpatterns = [
@@ -83,5 +84,6 @@ urlpatterns = [
     path('Retrieve/board/<int:board_id>/list/<int:list_id>/card/<int:card_id>/', RetrieveCard.as_view(), name='retrieve_card'),
     path('Delete/board/<int:board_id>/list/<int:list_id>/card/<int:card_id>/', DeleteCard.as_view(), name='delete_card'),
     path('leave/board/<int:board_id>/', LeaveBoard.as_view(), name='leave_board'),
+    path('invited/board/<int:board_id>/', InvitedBoard.as_view(), name='invited'),
 
 ]

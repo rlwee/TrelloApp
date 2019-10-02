@@ -294,6 +294,7 @@ $(document).ready(function(){
                     url:cardUrl,
                     data:{'card_id':cardID,'list_id':sectionID,'csrfmiddlewaretoken':csrf}
                 }).done(function(response){
+                    
                     var cardcontainer = response.list_id;
                     var cardget = $(`#list-${cardcontainer}`);
 
@@ -309,7 +310,6 @@ $(document).ready(function(){
                     <small class="text-muted">Donec id elit non mi porta.</small>`
                     console.log(user, 'response user');
                     $('.list-group').find('#logContainer').append(activity_template);
- 
                 });
             }
         });

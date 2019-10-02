@@ -10,14 +10,13 @@ class BoardPermissionMixin():
     
     def dispatch(self, *args, **kwargs):
         board_id = kwargs.get('board_id')
-        board = get_object_or_404(Board, id=board_id)
-        user = BoardMembers.objects.filter(member=self.request.user)
-
-        """ if self.request.user in BoardMembers.objects.filter(member=self.request.user):
-            raise Http404 """
-        if board.owner == self.request.user or user.owner == True:
-            return super().dispatch(*args, **kwargs)
-        raise Http404
+        boardOwner = get_object_or_404(Board, id=board_id)
         
+        if self.request.user != boardOwner.owner:
+            raise Http404
+        
+        return super().dispatch(*args, **kwargs)
+        
+
         
 
