@@ -6,16 +6,20 @@ from trelloapp.models import Board
 
 
 class BoardPermissionMixin():
-    #import pdb; pdb.set_trace()
     
     def dispatch(self, *args, **kwargs):
-        board_id = kwargs.get('board_id')
-        boardOwner = get_object_or_404(Board, id=board_id)
+        board = get_object_or_404(Board, id=kwargs.get('board_id'))
+        members = BoardMembers.objects.filter(board=board, member=self.request.user)
         
-        if self.request.user != boardOwner.owner:
+        
+        if members:
+            return super().dispatch(*args, **kwargs)
+        else:
             raise Http404
         
-        return super().dispatch(*args, **kwargs)
+        
+        
+        
         
 
         

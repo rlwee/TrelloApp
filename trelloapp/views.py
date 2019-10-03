@@ -20,6 +20,8 @@ from braces.views._access import AccessMixin
 from braces.views import AnonymousRequiredMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from django.dispatch import receiver
+from django.db.models.signals import post_save  
 
 # Create your views here.
 
@@ -66,7 +68,7 @@ class BoardCreateView(TemplateView):
 
 
 class BoardView(BoardPermissionMixin, TemplateView):
-
+    #BoardPermissionMixin, 
     template_name = 'trelloapp/currentboard.html'
     form = TrelloListForm
     
@@ -629,7 +631,8 @@ class Email(View):
                             {
                              'uid':invite.member,
                              'domain':domain,
-                             'board_id':board.id}
+                             'board_id':board.id,
+                             'board':board}
             )
             send_mail(subject, message, email_from, recipient_list,fail_silently=True, html_message=html_message)
             return JsonResponse({'receiver':receiver}) 
@@ -639,18 +642,24 @@ class Email(View):
 class LoginInvite(TemplateView):
 
     template_name = 'accounts/logininvitaion.html'
-
-    def get(self,request,**kwargs):
+    
+    
+    def get(self, request, **kwargs):
         form = AuthenticationForm()
-
+        board_id = kwargs.get('board_id')
+        board = get_object_or_404(Board, id=board_id)
         invite = get_object_or_404(BoardInvite, member=kwargs.get('uid'))
-        user_email = User.objects.get(email=invite.email) 
+        user_email = User.objects.get(email=invite.email)
         newMember = BoardMembers.objects.create(board=invite.board,member=user_email,owner=True)
-        #user = authenticate(username=username, password=password)
+
         return render(request, self.template_name, {'form':form})
 
     def post(self,request,**kwargs):
+        invite = get_object_or_404(BoardInvite, member=kwargs.get('uid'))
+        user_email = User.objects.get(email=invite.email)
+        newMember = BoardMembers.objects.create(board=invite.board,member=user_email,owner=True)
         
+
         form = AuthenticationForm(request=request, data=request.POST)
         if form.is_valid():
             username = form.cleaned_data.get('username')
@@ -689,5 +698,4 @@ class LeaveBoard(TemplateView):
             member.delete()
             invited.delete()
             return redirect('dashboard')
-
 

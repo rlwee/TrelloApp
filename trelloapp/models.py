@@ -6,6 +6,8 @@ from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey,GenericRelation
 from django.contrib.contenttypes.models import ContentType
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # Create your models here.
 class Activity(models.Model):
@@ -37,6 +39,11 @@ class Board(models.Model):
     def __str__(self):
         return self.title
 
+class BoardMembers(models.Model):
+    board = models.ForeignKey('Board', on_delete=models.CASCADE)
+    member = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.BooleanField(default=False)
+    
 
 class TrelloList(models.Model):
     title = models.CharField(max_length=50)
@@ -58,12 +65,6 @@ class Card(models.Model):
 
     def __str__(self):
         return self.title
-
-class BoardMembers(models.Model):
-    board = models.ForeignKey('Board', on_delete=models.CASCADE)
-    member = models.ForeignKey(User, on_delete=models.CASCADE)
-    owner = models.BooleanField(default=False)
-    
     
 
 class BoardInvite(models.Model):
@@ -73,8 +74,11 @@ class BoardInvite(models.Model):
 
     def __str__(self):
         return self.email
-    
 
 
 
+@receiver(post_save, sender=Board)
+def create_member(sender, instance, created, **kwargs):
+    if created:
+        BoardMembers.objects.create(board=instance, member=instance.owner, owner=True)
 

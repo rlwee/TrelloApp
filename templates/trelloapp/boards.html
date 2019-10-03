@@ -17,7 +17,7 @@
 
               {% ifchanged invited.board %}
                 <li><a class="invitedboardlist"
-                href="{% url 'invited' board_id=invited.board.id %}">{{invited.board}}</a><a class="leave-board" href="{% url 'leave_board' board_id=invited.board.id %}">leave</a></li>
+                href="{% url 'board' board_id=invited.board.id %}">{{invited.board}}</a><a class="leave-board" href="{% url 'leave_board' board_id=invited.board.id %}">leave</a></li>
               {% endifchanged %}
                 
               {% empty %}
