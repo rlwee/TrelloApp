@@ -78,11 +78,14 @@ class BoardView(BoardPermissionMixin, TemplateView):
         board = get_object_or_404(Board, pk=id)
         boardlist = TrelloList.objects.filter(board=board)
         
+        dragged = Activity.objects.filter(user=request.user, activity_type=Activity.DRAGGED)
+        #import pdb; pdb.set_trace()
         form = self.form()
         context = {
             'board':board,
             'boardlist':boardlist,
-            'form':form
+            'form':form,
+            'dragged':dragged,
         }
         return render(request, self.template_name, context)
        

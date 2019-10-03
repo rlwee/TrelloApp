@@ -76,7 +76,10 @@ data-target="#board-modal"
 
       <a href="#" id="logContainer" class="list-group-item list-group-item-action">
         <div class="d-flex w-100 justify-content-between">
-          <h5 class="mb-1">Activity </h5>
+          <h5 class="mb-1">{% for activity in dragged %}
+                              {{activity.user}} {{activity.activity_type}} {{activity.content_type}} {{activity.content_type.title}}
+                           {% endfor %}
+          </h5>
           <small class="text-muted">3 days ago</small>
         </div>
 

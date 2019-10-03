@@ -28,6 +28,9 @@ class Activity(models.Model):
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
 
+    def __str__(self):
+        return self.activity_type
+
 
 
 class Board(models.Model):
@@ -44,6 +47,8 @@ class BoardMembers(models.Model):
     member = models.ForeignKey(User, on_delete=models.CASCADE)
     owner = models.BooleanField(default=False)
     
+    def __str__(self):
+        return "{} {}".format(self.board.title, self.member)
 
 class TrelloList(models.Model):
     title = models.CharField(max_length=50)
