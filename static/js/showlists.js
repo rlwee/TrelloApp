@@ -142,8 +142,15 @@ $(document).ready(function(){
                 var listID = response.list_id;
                 var cardContainer = $(`#list-${listID}`);
                 var card_template = `<li class="card-content" data-title="" data-update="/board/${response.board_id}/list/${response.list_id}/card/${response.id}/update/" contenteditable="true">${response.title}</li>`;
+                var cards_template = `<div class="draggable shadow-sm p-3 mb-5 bg-white rounded ui-draggable ui-draggable-handle" id="draggable" data-url="/board/${response.board_id}/list/${response.list_id}/card/${response.id}/dragged/card/" data-id="${response.id}"> 
+  
+                <button type="button" id="carddetail-${response.id}" data-id="${response.id}" data-title="${response.title}" class="btn btn-primary-card" data-remote="/board/${response.board_id}/list/${response.list_id}/card/${response.id}/" data-toggle="modal" data-target="#card-view-modal">${response.title}
+                  </button>
 
-                $(cardContainer).find('.list-view').append(card_template);
+                  <img class="imgdrag" src="/static/images/dragcardicon.png" width="20" ,="" height="20">
+
+                </div>`
+                $(cardContainer).find('.list-view').append(cards_template);
                 $('#card-modal').modal('hide');
                 
                 console.log(response, 'done');
