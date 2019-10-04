@@ -395,9 +395,15 @@ li {
 
 .list-group{
 
-    width: 300px;
+    width: 400px;
     position: relative;
     left: 130%;
     bottom: 525px;
 
+}
+
+.actlog{
+
+    font-size: 16px;
+    margin-bottom: 8px;
 }

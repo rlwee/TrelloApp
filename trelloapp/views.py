@@ -79,6 +79,7 @@ class BoardView(BoardPermissionMixin, TemplateView):
         boardlist = TrelloList.objects.filter(board=board)
         
         dragged = Activity.objects.filter(user=request.user, activity_type=Activity.DRAGGED)
+
         #import pdb; pdb.set_trace()
         form = self.form()
         context = {
@@ -512,9 +513,10 @@ class DragCard(View):
         user = request.user
         usr = User.objects.get(username=request.user)
         card = get_object_or_404(Card, id=kwargs.get('card_id'), trello_list__id= kwargs.get('list_id'))
+        blist = get_object_or_404(TrelloList, id=kwargs.get('list_id'), board_id=kwargs.get('board_id'))
         card.trello_list = get_object_or_404(TrelloList, id=request.POST.get('list_id'))
-        #card.drag.create(activity_type=Activity.MOVED, user=request.user)
         activity = Activity.objects.create(content_object=card, activity_type=Activity.DRAGGED, user=request.user)
+        #activity = Activity.objects.create(content_object=blist, ac)
         card.save()
         #import pdb; pdb.set_trace()
         return JsonResponse({'user':usr.username,
@@ -605,6 +607,8 @@ class InviteMember(TemplateView):
         board = get_object_or_404(Board, pk=board_id)
         form = self.form()
         form.fields['board'].initial=board
+        
+        
         return render(request, self.template_name, {'form':form,'board':board,})
 
 
@@ -616,7 +620,7 @@ class Email(View):
         board_id = kwargs.get('board_id')
         board = get_object_or_404(Board, pk=board_id)
         form = self.form(request.POST)
-
+        userEmail = request.user.email
         domain = request.META['HTTP_HOST']
 
         if form.is_valid():
@@ -636,7 +640,7 @@ class Email(View):
                              'domain':domain,
                              'board_id':board.id,
                              'board':board}
-            )
+                                                    )
             send_mail(subject, message, email_from, recipient_list,fail_silently=True, html_message=html_message)
             return JsonResponse({'receiver':receiver}) 
         return JsonResponse({}, status=400)

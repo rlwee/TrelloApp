@@ -11,6 +11,7 @@ class BoardPermissionMixin():
         board = get_object_or_404(Board, id=kwargs.get('board_id'))
         members = BoardMembers.objects.filter(board=board, member=self.request.user)
         
+        
         if members.exists():
             return super().dispatch(*args, **kwargs)
         raise Http404

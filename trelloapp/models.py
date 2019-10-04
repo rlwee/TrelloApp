@@ -12,12 +12,16 @@ from django.dispatch import receiver
 # Create your models here.
 class Activity(models.Model):
     DRAGGED = 'dragged'
+    FROM = 'from'
+    TO = 'to'
     MOVED = 'M'
     RENAME = 'R'
     ACTIVITY_TYPES = (
                         (MOVED, 'MOVED'),
                         (RENAME, 'RENAME'),
-                        (DRAGGED, 'dragged')
+                        (DRAGGED, 'dragged'),
+                        (FROM, 'from'),
+                        (TO, 'to')
                      )
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -29,7 +33,7 @@ class Activity(models.Model):
     content_object = GenericForeignKey('content_type', 'object_id')
 
     def __str__(self):
-        return self.activity_type
+        return "{} {}".format(self.activity_type, self.content_object)
 
 
 
@@ -55,6 +59,8 @@ class TrelloList(models.Model):
     date_created =models.DateTimeField(default = timezone.now())
     board = models.ForeignKey('Board', on_delete = models.CASCADE)
     archive = models.BooleanField(default=False)
+    activity_from = GenericRelation(Activity)
+    activity_to = GenericRelation(Activity)
 
     def __str__(self):
         return self.title
@@ -87,3 +93,8 @@ def create_member(sender, instance, created, **kwargs):
     if created:
         BoardMembers.objects.create(board=instance, member=instance.owner, owner=True)
 
+@receiver(post_save, sender=TrelloList)
+def create_from_list(sender, instance, created, **kwargs):
+    if created:
+        import pdb; pdb.set_trace()
+        Activity.objects.create(content_object=instance, activity_type=Activity.TO, user=request.user)
