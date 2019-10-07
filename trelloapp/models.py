@@ -92,6 +92,8 @@ class BoardInvite(models.Model):
 def create_member(sender, instance, created, **kwargs):
     if created:
         BoardMembers.objects.create(board=instance, member=instance.owner, owner=True)
+    if created:
+        BoardInvite.objects.create(board=instance, email=instance.owner.email)
 
 @receiver(post_save, sender=TrelloList)
 def create_from_list(sender, instance, created, **kwargs):

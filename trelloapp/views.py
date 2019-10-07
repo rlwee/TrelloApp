@@ -626,22 +626,26 @@ class Email(View):
         if form.is_valid():
             invite = form.save(commit=False)
             invite.board = board
-            invite.save()
-            receiver = request.POST.get('email')
-            subject = 'Hi hello hey ! You have a Trello board invitation'
-            message = 'You have received and invitation to a board!'
-            email_from = settings.EMAIL_HOST_USER
-            recipient_list = [receiver,]
-            
-            html_message = loader.render_to_string(
-                            'trelloapp/invitation.html',
-                            {
-                             'uid':invite.member,
-                             'domain':domain,
-                             'board_id':board.id,
-                             'board':board}
-                                                    )
-            send_mail(subject, message, email_from, recipient_list,fail_silently=True, html_message=html_message)
+            member = BoardInvite.objects.filter(board=board, email=invite.email)
+
+            if not member.exists():
+                invite.save()
+                receiver = request.POST.get('email')
+                subject = 'Hi hello hey ! You have a Trello board invitation'
+                message = 'You have received and invitation to a board!'
+                email_from = settings.EMAIL_HOST_USER
+                recipient_list = [receiver,]
+                
+                html_message = loader.render_to_string(
+                                'trelloapp/invitation.html',
+                                {
+                                'uid':invite.member,
+                                'domain':domain,
+                                'board_id':board.id,
+                                'board':board}
+                                                        )
+                send_mail(subject, message, email_from, recipient_list,fail_silently=True, html_message=html_message)
+                
             return JsonResponse({'receiver':receiver}) 
         return JsonResponse({}, status=400)
 

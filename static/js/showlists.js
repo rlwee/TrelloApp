@@ -439,8 +439,13 @@ $(document).ready(function(){
                 alert("Email invitation sent!");
                 console.log(response,'invitetest')
             }).fail(function(response){
-                var errorMessage = '<p>This field is required</p>';
+                var errorMessage = '<p style="color:red">Invalid input!</p>';
+                var errorMess = '<p style="color:red">·Please check email format</p>';
+                var errorMes = '<p style="color:red">·This email might be existing in a board already</p>';
+                console.log(response,'invite test')
                 $('.invite-success').html(errorMessage);
+                $('.invite-fail').html(errorMess);
+                $('.invite-failed').html(errorMes);
             });
 
         })
